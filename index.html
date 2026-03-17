@@ -2,27 +2,84 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Truco-Uno Solitaire</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TRUCO-UNO: La Revancha</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a3d1d">
 </head>
 <body>
-    <div id="game-container">
-        <h1>Truco-Uno Solitaire</h1>
-        <div class="stats">
-            <p>Puntos: <span id="score">0</span></p>
-            <p>Mazo: <span id="deck-count">40</span></p>
+
+    <div id="start-screen" class="overlay active">
+        <div class="menu-content tallado">
+            <h1 class="logo">TRUCO<span class="uno-color">UNO</span></h1>
+            <p class="subtitle">La Revancha Solitaria</p>
+            <button onclick="startGame()" class="btn-jugara">¡JUGAR MANO!</button>
+            <div class="menu-subs">
+                <button onclick="toggleOverlay('rules-overlay')">Reglas</button>
+                <button onclick="toggleOverlay('credits-overlay')">Créditos</button>
+            </div>
         </div>
+    </div>
+
+    <div id="rules-overlay" class="overlay">
+        <div class="menu-content paper">
+            <h2>Reglas de la Mesa</h2>
+            <div class="scroll-text">
+                <p><strong>Objetivo:</strong> Descartar toda tu mano en la pila central.</p>
+                <p><strong>Mecánica Uno:</strong> Juega una carta que coincida en <strong>Palo</strong> o <strong>Número</strong> con la del centro.</p>
+                <p><strong>Poder del Truco:</strong> Las cartas tienen la jerarquía del Truco. Jugar cartas altas da más puntos.</p>
+                <p><strong>Bonus "Ancho":</strong> Los 1 de Espada y Basto limpian la mesa (suman puntos y cambian la carta central aleatoriamente).</p>
+                <p><strong>Robar:</strong> Si no tienes juego, toca el mazo.</p>
+            </div>
+            <button onclick="toggleOverlay('rules-overlay')" class="btn-close">Entendido</button>
+        </div>
+    </div>
+
+    <div id="credits-overlay" class="overlay">
+        <div class="menu-content paper">
+            <h2>Créditos</h2>
+            <p>Creado por: Tu Nombre/Estudio</p>
+            <p>Diseño Visual: Gaucho-Punk Style v1</p>
+            <p>Música: "Milonga de Neón" (IA Generated)</p>
+            <button onclick="toggleOverlay('credits-overlay')" class="btn-close">Cerrar</button>
+        </div>
+    </div>
+
+    <div id="game-ui">
+        <div class="mesa-textura"></div>
         
-        <div class="board">
-            <div id="discard-pile" class="card">?</div>
-            <div id="deck" class="card back">MAZO</div>
+        <div class="top-bar">
+            <div class="stat tallado">🏆 <span id="score">0</span></div>
+            <button id="music-toggle" onclick="toggleMusic()">🔇</button>
+            <div class="stat tallado">🎴 <span id="deck-count">40</span></div>
         </div>
 
-        <div id="player-hand" class="hand"></div>
-        
-        <p id="msg">¡Juega una carta que coincida en palo o número!</p>
-        <button onclick="drawCard()">Robar Carta</button>
+        <div class="play-area">
+            <div id="deck" class="card-slot deck-stack" onclick="drawCard()">
+                <div class="card-back taller"></div>
+            </div>
+            <div id="discard-pile" class="card-slot">
+                </div>
+        </div>
+
+        <div id="feedback-matrix">¡QUIERO VALE CUATRO!</div>
+
+        <div class="hand-container">
+            <div id="player-hand" class="hand"></div>
+        </div>
     </div>
+
+    <audio id="bg-music" loop>
+        <source src="assets/music_fondo.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="snd-card" preload="auto">
+        <source src="assets/card_slide.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="snd-special" preload="auto">
+        <source src="assets/special_ancho.mp3" type="audio/mpeg">
+    </audio>
+
     <script src="script.js"></script>
 </body>
 </html>
