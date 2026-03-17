@@ -1,16 +1,17 @@
 {
-  "name": "Truco-Stack Online",
+  "name": "Truco Stack Pro",
   "short_name": "TrucoStack",
-  "start_url": "./index.html",
+  "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#0a3d1d",
+  "background_color": "#1b5e20",
   "theme_color": "#ffd700",
   "orientation": "portrait",
   "icons": [
     {
       "src": "https://github.com/joaco-games/juegos/blob/main/icono..png?raw=true",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
