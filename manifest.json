@@ -1,15 +1,14 @@
 {
-  "short_name": "TrucoUno",
-  "name": "TRUCO-UNO: Stack & Win",
-  "description": "Híbrido de cartas: Truco, Uno y Solitario.",
+  "short_name": "StackWin",
+  "name": "STACK & WIN: La Revancha",
   "icons": [
     {
-      "src": "icono.png",
+      "src": "icono..png",
       "type": "image/png",
       "sizes": "1024x1024"
     },
     {
-      "src": "icono.png",
+      "src": "icono..png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any maskable"
