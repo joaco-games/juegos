@@ -3,71 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TRUCO-STACK ONLINE</title>
+    <title>TRUCO-STACK ONLINE ARENA</title>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
         :root { --gold: #ffd700; --green: radial-gradient(circle, #1b5e20, #0a3d1d); --red: #ff1744; }
-        body { margin: 0; background: #000; font-family: 'Segoe UI', sans-serif; color: white; overflow: hidden; }
+        body { margin: 0; background: #000; font-family: 'Arial Rounded MT Bold', sans-serif; color: white; overflow: hidden; touch-action: manipulation; }
         
-        /* Menú Online */
         .overlay { position: fixed; inset: 0; background: var(--green); z-index: 1000; display: flex; justify-content: center; align-items: center; text-align: center; }
         .overlay:not(.active) { display: none; }
-        .menu-card { background: rgba(0,0,0,0.6); padding: 30px; border-radius: 30px; border: 2px solid var(--gold); width: 80%; max-width: 400px; backdrop-filter: blur(10px); }
+        .menu-card { background: rgba(0,0,0,0.6); padding: 25px; border-radius: 30px; border: 2px solid var(--gold); width: 85%; max-width: 400px; backdrop-filter: blur(10px); }
         
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; text-align: center; font-size: 1.1rem; }
-        .btn { background: linear-gradient(to bottom, #ffeb3b, #fbc02d); border: none; padding: 15px; font-size: 1.1rem; font-weight: bold; border-radius: 50px; color: #3e2723; cursor: pointer; width: 100%; margin: 5px 0; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; text-align: center; font-size: 1.1rem; }
+        .btn { background: linear-gradient(to bottom, #ffeb3b, #fbc02d); border: none; padding: 15px; font-size: 1.1rem; font-weight: bold; border-radius: 50px; color: #3e2723; cursor: pointer; width: 100%; margin: 8px 0; box-shadow: 0 4px 0 #bda06d; }
+        .btn-blue { background: linear-gradient(to bottom, #4fc3f7, #0288d1); color: white; box-shadow: 0 4px 0 #01579b; }
         
-        /* Juego */
         #game-ui { height: 100vh; display: none; flex-direction: column; background: var(--green); }
         .header { display: flex; justify-content: space-between; padding: 45px 20px 10px; }
-        .status-bar { background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 15px; border: 1px solid var(--gold); font-size: 0.8rem; }
+        .status-bar { background: rgba(0,0,0,0.5); padding: 5px 12px; border-radius: 15px; border: 1px solid var(--gold); font-size: 0.75rem; }
         
         .table { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
-        .card-slot { width: 85px; height: 130px; border: 2px dashed rgba(255,255,255,0.3); border-radius: 12px; position: relative; display: flex; align-items: center; justify-content: center; }
+        .card-slot { width: 80px; height: 120px; border: 2px dashed rgba(255,255,255,0.3); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
         
-        .card-obj { width: 85px; height: 130px; background: white; border-radius: 10px; color: black; display: flex; flex-direction: column; justify-content: space-between; padding: 10px; box-sizing: border-box; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: absolute; }
+        .card-obj { width: 80px; height: 120px; background: white; border-radius: 10px; color: black; display: flex; flex-direction: column; justify-content: space-between; padding: 8px; box-sizing: border-box; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: absolute; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        .hand-area { height: 160px; width: 100%; position: relative; margin-bottom: 30px; }
+        .chat-pills { display: flex; justify-content: center; gap: 8px; padding: 10px; }
+        .pill { background: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; border: 2px solid var(--gold); }
+
+        .hand-area { height: 150px; width: 100%; position: relative; margin-bottom: 20px; }
         .hand { display: flex; justify-content: center; }
-        .hand .card-obj { position: absolute; cursor: pointer; transition: 0.2s; bottom: 0; }
+        .hand .card-obj { position: absolute; cursor: pointer; bottom: 0; }
         
-        #msg { position: fixed; top: 30%; width: 100%; text-align: center; font-size: 1.5rem; color: var(--gold); pointer-events: none; z-index: 2000; text-shadow: 2px 2px 5px #000; }
+        #floating-msg { position: fixed; top: 35%; width: 100%; text-align: center; font-size: 3rem; pointer-events: none; z-index: 2000; opacity: 0; }
+        .show-float { animation: floatUp 1.5s forwards; }
+        @keyframes floatUp { 0% { opacity: 0; transform: scale(0.5); } 20% { opacity: 1; transform: scale(1.3); } 100% { opacity: 0; transform: translateY(-100px); } }
     </style>
 </head>
 <body>
 
     <div id="lobby" class="overlay active">
         <div class="menu-card">
-            <img src="https://github.com/joaco-games/juegos/blob/main/icono..png?raw=true" style="width:80px; border-radius:20px; border:2px solid var(--gold)">
-            <h2 style="color:var(--gold)">ONLINE ARENA</h2>
+            <img src="https://github.com/joaco-games/juegos/blob/main/icono..png?raw=true" style="width:70px; border-radius:20px; border:2px solid var(--gold)">
+            <h2 style="color:var(--gold); margin:10px 0;">TRUCO-STACK</h2>
             
             <div id="setup-controls">
+                <button class="btn btn-blue" onclick="startSoloGame()">SOLITARIO (VS IA)</button>
+                <div style="margin: 10px 0; font-size: 0.8rem; opacity: 0.6;">MODO ONLINE</div>
                 <button class="btn" onclick="startAsHost()">CREAR MESA</button>
-                <div style="margin: 15px 0; opacity: 0.5;">— O —</div>
                 <input type="text" id="join-id" placeholder="ID de la Mesa">
-                <button class="btn" onclick="joinRoom()">UNIRSE A MESA</button>
+                <button class="btn" onclick="joinRoom()">UNIRSE A AMIGOS</button>
             </div>
             
             <div id="waiting-area" style="display:none;">
-                <p>Tu ID de Mesa: <b id="my-id" style="color:var(--gold)">...</b></p>
-                <p>Jugadores conectados: <span id="player-count">1</span>/4</p>
-                <button class="btn" id="start-btn" style="display:none;" onclick="broadcastStart()">EMPEZAR JUEGO</button>
+                <p>Mesa ID: <b id="my-id" style="color:var(--gold)">...</b></p>
+                <p>Jugadores: <span id="player-count">1</span>/4</p>
+                <button class="btn" id="start-btn" style="display:none;" onclick="broadcastStart()">¡REPARTIR CARTAS!</button>
             </div>
         </div>
     </div>
 
     <div id="game-ui">
         <div class="header">
-            <div class="status-bar">ID: <span id="room-label"></span></div>
-            <div class="status-bar">TURNO: <b id="turn-label">Esperando...</b></div>
+            <div class="status-bar" id="room-info">Modo: Solitario</div>
+            <div class="status-bar"><b id="turn-label">Tu Turno</b></div>
         </div>
         
         <div class="table">
-            <div id="msg"></div>
-            <div style="display:flex; gap:20px;">
+            <div id="floating-msg"></div>
+            <div style="display:flex; gap:15px;">
                 <div class="card-slot" onclick="requestCard()">MAZO</div>
                 <div id="discard-pile" class="card-slot"></div>
             </div>
+        </div>
+
+        <div class="chat-pills">
+            <div class="pill" onclick="sendEmoji('🔥')">🔥</div>
+            <div class="pill" onclick="sendEmoji('🤡')">🤡</div>
+            <div class="pill" onclick="sendEmoji('⚔️')">⚔️</div>
+            <div class="pill" onclick="sendEmoji('😜')">😜</div>
+            <div class="pill" onclick="sendEmoji('👎')">👎</div>
         </div>
 
         <div class="hand-area">
@@ -77,76 +90,69 @@
 
     <script>
         let peer, conn, connections = [];
-        let isHost = false;
+        let isHost = false, isSolo = false;
         let myIdInGame = 0;
-        let gameState = {
-            deck: [],
-            discard: null,
-            hands: [],
-            turn: 0,
-            scores: [0,0,0,0]
-        };
+        let gameState = { deck: [], discard: null, hands: [[],[],[],[]], turn: 0 };
 
         const suits = [{n:'Espadas',s:'⚔️',c:'#1976d2'},{n:'Bastos',s:'🪵',c:'#388e3c'},{n:'Oros',s:'🟡',c:'#fbc02d'},{n:'Copas',s:'🏆',c:'#d32f2f'}];
         const values = [1,2,3,4,5,6,7,10,11,12];
 
-        // INICIAR COMO HOST
-        function startAsHost() {
-            isHost = true;
-            peer = new Peer('mesa-' + Math.floor(Math.random()*9999));
-            peer.on('open', id => {
-                showWaiting(id);
-                document.getElementById('start-btn').style.display = 'block';
-            });
-            peer.on('connection', c => {
-                if(connections.length >= 3) return c.close();
-                connections.push(c);
-                updateLobby();
-                c.on('data', data => handleData(data, connections.indexOf(c) + 1));
-            });
-        }
-
-        // UNIRSE A UNA MESA
-        function joinRoom() {
-            const targetId = document.getElementById('join-id').value;
-            peer = new Peer();
-            peer.on('open', () => {
-                conn = peer.connect(targetId);
-                conn.on('open', () => {
-                    showWaiting(targetId);
-                    document.getElementById('waiting-area').innerHTML = "<p>Conectado. Esperando al anfitrión...</p>";
-                });
-                conn.on('data', data => handleData(data, 0));
-            });
-        }
-
-        function handleData(data, senderIndex) {
-            if(data.type === 'START') {
-                gameState = data.state;
-                myIdInGame = isHost ? 0 : senderIndex || connections.length; // Simplificado
-                startGameUI();
-            }
-            if(data.type === 'UPDATE') {
-                gameState = data.state;
-                render();
-            }
-        }
-
-        function broadcastStart() {
-            // Crear mazo y repartir
+        // MODO SOLITARIO
+        function startSoloGame() {
+            isSolo = true;
+            document.getElementById('room-info').innerText = "VS Inteligencia Artificial";
             gameState.deck = [];
             suits.forEach(s => values.forEach(v => gameState.deck.push({suit:s, value:v})));
             gameState.deck.sort(() => Math.random() - 0.5);
             
+            for(let i=0; i<2; i++) { // Solo 2 jugadores: Tú y la IA
+                gameState.hands[i] = [];
+                for(let j=0; j<5; j++) gameState.hands[i].push(gameState.deck.pop());
+            }
+            gameState.discard = gameState.deck.pop();
+            myIdInGame = 0;
+            startGameUI();
+        }
+
+        // MODO ONLINE
+        function startAsHost() {
+            isHost = true; isSolo = false;
+            peer = new Peer('mesa-' + Math.floor(Math.random()*999));
+            peer.on('open', id => showWaiting(id));
+            peer.on('connection', c => {
+                connections.push(c); updateLobby();
+                c.on('data', data => handleData(data, connections.indexOf(c) + 1));
+            });
+            document.getElementById('start-btn').style.display = 'block';
+        }
+
+        function joinRoom() {
+            isSolo = false;
+            const targetId = document.getElementById('join-id').value;
+            peer = new Peer();
+            peer.on('open', () => {
+                conn = peer.connect(targetId);
+                conn.on('open', () => showWaiting(targetId));
+                conn.on('data', data => handleData(data, 0));
+            });
+        }
+
+        function handleData(data, senderIdx) {
+            if(data.type === 'START') { gameState = data.state; myIdInGame = data.yourIdx; startGameUI(); }
+            if(data.type === 'UPDATE') { gameState = data.state; render(); }
+            if(data.type === 'EMOJI') { showEmoji(data.emoji); }
+        }
+
+        function broadcastStart() {
+            gameState.deck = [];
+            suits.forEach(s => values.forEach(v => gameState.deck.push({suit:s, value:v})));
+            gameState.deck.sort(() => Math.random() - 0.5);
             for(let i=0; i<4; i++) {
                 gameState.hands[i] = [];
                 for(let j=0; j<5; j++) gameState.hands[i].push(gameState.deck.pop());
             }
             gameState.discard = gameState.deck.pop();
-            
-            connections.forEach((c, idx) => {
-                c.send({type: 'START', state: gameState, playerIdx: idx + 1});
-            });
+            connections.forEach((c, i) => c.send({type: 'START', state: gameState, yourIdx: i+1}));
             myIdInGame = 0;
             startGameUI();
         }
@@ -159,7 +165,7 @@
 
         function render() {
             document.getElementById('discard-pile').innerHTML = createCardHTML(gameState.discard);
-            document.getElementById('turn-label').innerText = gameState.turn === myIdInGame ? "TU TURNO" : "JUGADOR " + (gameState.turn + 1);
+            document.getElementById('turn-label').innerText = gameState.turn === myIdInGame ? "TU TURNO" : (isSolo ? "PENSANDO IA..." : "TURNO RIVAL");
             
             const handDiv = document.getElementById('player-hand');
             handDiv.innerHTML = '';
@@ -168,61 +174,80 @@
             myHand.forEach((card, i) => {
                 const cardEl = document.createElement('div');
                 cardEl.className = 'card-obj';
-                cardEl.innerHTML = `<b>${card.value}</b><div style="font-size:2rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b>`;
+                cardEl.innerHTML = `<b>${card.value}</b><div style="font-size:1.8rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b>`;
                 cardEl.style.color = card.suit.c;
-                cardEl.style.left = `calc(50% - 40px + ${(i - (myHand.length-1)/2)*50}px)`;
+                cardEl.style.left = `calc(50% - 40px + ${(i - (myHand.length-1)/2)*45}px)`;
                 cardEl.onclick = () => playCard(i);
                 handDiv.appendChild(cardEl);
             });
+
+            if(isSolo && gameState.turn === 1) setTimeout(iaMove, 1000);
         }
 
         function playCard(i) {
-            if(gameState.turn !== myIdInGame) return showMsg("No es tu turno");
+            if(gameState.turn !== myIdInGame) return;
             const card = gameState.hands[myIdInGame][i];
-            
             if(card.suit.n === gameState.discard.suit.n || card.value === gameState.discard.value) {
                 gameState.discard = card;
                 gameState.hands[myIdInGame].splice(i, 1);
-                gameState.turn = (gameState.turn + 1) % 4;
-                sync();
-            } else {
-                showMsg("Carta no válida");
+                gameState.turn = (gameState.turn + 1) % (isSolo ? 2 : 4);
+                if(!isSolo) sync(); else render();
             }
+        }
+
+        function iaMove() {
+            if(!isSolo || gameState.turn !== 1) return;
+            let possibleCards = gameState.hands[1].filter(c => c.suit.n === gameState.discard.suit.n || c.value === gameState.discard.value);
+            
+            if(possibleCards.length > 0) {
+                // IA estratégica: Tira la de menor valor si tiene varias
+                possibleCards.sort((a,b) => b.value - a.value);
+                let selectedCard = possibleCards[0];
+                let idx = gameState.hands[1].indexOf(selectedCard);
+                gameState.discard = gameState.hands[1].splice(idx, 1)[0];
+                showEmoji('🤫');
+            } else if(gameState.deck.length > 0) {
+                gameState.hands[1].push(gameState.deck.pop());
+            }
+            gameState.turn = 0;
+            render();
         }
 
         function requestCard() {
-            if(gameState.turn !== myIdInGame) return;
-            if(gameState.deck.length > 0) {
+            if(gameState.turn === myIdInGame && gameState.deck.length > 0) {
                 gameState.hands[myIdInGame].push(gameState.deck.pop());
-                gameState.turn = (gameState.turn + 1) % 4;
-                sync();
+                gameState.turn = (gameState.turn + 1) % (isSolo ? 2 : 4);
+                if(!isSolo) sync(); else render();
             }
+        }
+
+        function sendEmoji(e) {
+            if(isSolo) return showEmoji(e);
+            if(isHost) connections.forEach(c => c.send({type: 'EMOJI', emoji: e}));
+            else conn.send({type: 'EMOJI', emoji: e});
+            showEmoji(e);
+        }
+
+        function showEmoji(e) {
+            const el = document.getElementById('floating-msg');
+            el.innerText = e; el.classList.add('show-float');
+            setTimeout(() => el.classList.remove('show-float'), 1500);
         }
 
         function sync() {
-            if(isHost) {
-                connections.forEach(c => c.send({type: 'UPDATE', state: gameState}));
-                render();
-            } else {
-                conn.send({type: 'UPDATE', state: gameState});
-            }
+            if(isHost) connections.forEach(c => c.send({type: 'UPDATE', state: gameState}));
+            else conn.send({type: 'UPDATE', state: gameState});
+            render();
         }
 
         function createCardHTML(card) {
-            return `<div class="card-obj" style="color:${card.suit.c}"><b>${card.value}</b><div style="font-size:2rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b></div>`;
-        }
-
-        function showMsg(t) {
-            const m = document.getElementById('msg');
-            m.innerText = t;
-            setTimeout(() => m.innerText = "", 1500);
+            return `<div class="card-obj" style="color:${card.suit.c}"><b>${card.value}</b><div style="font-size:1.8rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b></div>`;
         }
 
         function showWaiting(id) {
             document.getElementById('setup-controls').style.display = 'none';
             document.getElementById('waiting-area').style.display = 'block';
             document.getElementById('my-id').innerText = id;
-            document.getElementById('room-label').innerText = id;
         }
 
         function updateLobby() {
