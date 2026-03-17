@@ -3,27 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TRUCO-STACK ONLINE ARENA</title>
+    <title>TRUCO-STACK PRO</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="TrucoStack">
     <link rel="apple-touch-icon" href="https://github.com/joaco-games/juegos/blob/main/icono..png?raw=true">
 
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
-        :root { --gold: #ffd700; --green: radial-gradient(circle, #1b5e20, #0a3d1d); --red: #ff1744; }
+        :root { --gold: #ffd700; --green: radial-gradient(circle, #1b5e20, #0a3d1d); }
         body { margin: 0; background: #000; font-family: 'Arial Rounded MT Bold', sans-serif; color: white; overflow: hidden; touch-action: manipulation; }
         
-        .overlay { position: fixed; inset: 0; background: var(--green); z-index: 1000; display: flex; justify-content: center; align-items: center; text-align: center; overflow-y: auto; }
+        .overlay { position: fixed; inset: 0; background: var(--green); z-index: 1000; display: flex; justify-content: center; align-items: center; text-align: center; }
         .overlay:not(.active) { display: none; }
-        .menu-card { background: rgba(0,0,0,0.7); padding: 25px; border-radius: 30px; border: 2px solid var(--gold); width: 85%; max-width: 400px; backdrop-filter: blur(10px); margin: 20px; }
+        .menu-card { background: rgba(0,0,0,0.7); padding: 25px; border-radius: 30px; border: 2px solid var(--gold); width: 85%; max-width: 400px; backdrop-filter: blur(10px); }
         
-        .info-section { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; margin: 15px 0; text-align: left; font-size: 0.85rem; line-height: 1.4; border-left: 4px solid var(--gold); }
-        .install-guide { font-size: 0.8rem; color: #4fc3f7; margin-top: 10px; padding: 10px; border: 1px dashed #4fc3f7; border-radius: 10px; }
-
-        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; text-align: center; font-size: 1.1rem; }
         .btn { background: linear-gradient(to bottom, #ffeb3b, #fbc02d); border: none; padding: 15px; font-size: 1.1rem; font-weight: bold; border-radius: 50px; color: #3e2723; cursor: pointer; width: 100%; margin: 8px 0; box-shadow: 0 4px 0 #bda06d; }
         .btn-blue { background: linear-gradient(to bottom, #4fc3f7, #0288d1); color: white; box-shadow: 0 4px 0 #01579b; }
         
@@ -37,52 +32,35 @@
         .card-obj { width: 80px; height: 120px; background: white; border-radius: 10px; color: black; display: flex; flex-direction: column; justify-content: space-between; padding: 8px; box-sizing: border-box; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: absolute; transition: 0.3s; }
 
         .chat-pills { display: flex; justify-content: center; gap: 8px; padding: 10px; }
-        .pill { background: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; border: 2px solid var(--gold); }
+        .pill { background: white; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; border: 2px solid var(--gold); }
 
         .hand-area { height: 150px; width: 100%; position: relative; margin-bottom: 20px; }
         .hand { display: flex; justify-content: center; }
         .hand .card-obj { position: absolute; cursor: pointer; bottom: 0; }
         
-        #floating-msg { position: fixed; top: 35%; width: 100%; text-align: center; font-size: 3rem; pointer-events: none; z-index: 2000; opacity: 0; }
+        #floating-msg { position: fixed; top: 35%; width: 100%; text-align: center; font-size: 3.5rem; pointer-events: none; z-index: 2000; opacity: 0; }
         .show-float { animation: floatUp 1.5s forwards; }
-        @keyframes floatUp { 0% { opacity: 0; transform: scale(0.5); } 20% { opacity: 1; transform: scale(1.3); } 100% { opacity: 0; transform: translateY(-100px); } }
+        @keyframes floatUp { 0% { opacity:0; transform:scale(0.5); } 20% { opacity:1; transform:scale(1.2); } 100% { opacity:0; transform:translateY(-100px); } }
 
-        #win-overlay { background: rgba(0,0,0,0.9); z-index: 5000; display: none; flex-direction: column; justify-content: center; align-items: center; }
+        #win-overlay { background: rgba(0,0,0,0.95); z-index: 5000; display: none; flex-direction: column; justify-content: center; align-items: center; }
         .win-banner { color: var(--gold); font-size: 3rem; text-shadow: 0 0 20px var(--gold); animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes pulse { 0% {transform:scale(1);} 50% {transform:scale(1.1);} 100% {transform:scale(1);} }
     </style>
 </head>
 <body>
 
     <div id="lobby" class="overlay active">
         <div class="menu-card">
-            <img src="https://github.com/joaco-games/juegos/blob/main/icono..png?raw=true" style="width:70px; border-radius:15px; border:2px solid var(--gold)">
-            <h2 style="color:var(--gold); margin:5px 0;">TRUCO-STACK</h2>
+            <h2 style="color:var(--gold)">TRUCO-STACK</h2>
+            <button class="btn btn-blue" onclick="startSoloGame()">SOLITARIO (VS IA)</button>
+            <button class="btn" onclick="startAsHost()">CREAR MESA ONLINE</button>
+            <input type="text" id="join-id" placeholder="ID de la Mesa">
+            <button class="btn" onclick="joinRoom()">UNIRSE A MESA</button>
             
-            <div class="info-section">
-                <strong>📝 REGLAS RÁPIDAS:</strong><br>
-                • Tira carta del mismo <b>Palo o Número</b>.<br>
-                • El <b>1 de Espadas</b> limpia la mesa.<br>
-                • Los <b>1, 2 y 3</b> dan puntos extra.
-            </div>
-
-            <div class="install-guide" id="install-area">
-                <strong>📲 INSTALAR:</strong><br>
-                <span id="install-text">Buscando opción de instalación...</span>
-                <button id="btn-install" class="btn-blue" style="display:none; padding:5px; font-size:0.8rem; margin-top:5px;">INSTALAR AHORA</button>
-            </div>
-
-            <div id="setup-controls" style="margin-top:15px;">
-                <button class="btn btn-blue" onclick="startSoloGame()">SOLITARIO (VS IA)</button>
-                <button class="btn" onclick="startAsHost()">CREAR MESA ONLINE</button>
-                <input type="text" id="join-id" placeholder="ID de la Mesa">
-                <button class="btn" onclick="joinRoom()">UNIRSE A MESA</button>
-            </div>
-            
-            <div id="waiting-area" style="display:none;">
-                <p>ID MESA: <b id="my-id" style="color:var(--gold)">...</b></p>
+            <div id="waiting-area" style="display:none; margin-top:15px;">
+                <p>ID: <b id="my-id" style="color:var(--gold)">...</b></p>
                 <p>Jugadores: <span id="player-count">1</span>/4</p>
-                <button class="btn" id="start-btn" style="display:none;" onclick="broadcastStart()">¡EMPEZAR!</button>
+                <button class="btn" id="start-btn" style="display:none;" onclick="broadcastStart()">¡REPARTIR!</button>
             </div>
         </div>
     </div>
@@ -90,7 +68,7 @@
     <div id="win-overlay" class="overlay">
         <div class="win-banner">¡VICTORIA!</div>
         <p id="winner-name" style="font-size:1.5rem;"></p>
-        <button class="btn" onclick="location.reload()" style="width:200px;">VOLVER AL MENÚ</button>
+        <button class="btn" onclick="location.reload()" style="width:220px;">JUGAR OTRA VEZ</button>
     </div>
 
     <div id="game-ui">
@@ -109,8 +87,8 @@
 
         <div class="chat-pills">
             <div class="pill" onclick="sendEmoji('🔥')">🔥</div>
-            <div class="pill" onclick="sendEmoji('🤡')">🤡</div>
             <div class="pill" onclick="sendEmoji('🤫')">🤫</div>
+            <div class="pill" onclick="sendEmoji('🃏')">🃏</div>
             <div class="pill" onclick="sendEmoji('😜')">😜</div>
             <div class="pill" onclick="sendEmoji('👎')">👎</div>
         </div>
@@ -121,37 +99,15 @@
     </div>
 
     <script>
-        // --- LÓGICA DE INSTALACIÓN ---
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('install-text').innerText = "¡Listo para Android!";
-            document.getElementById('btn-install').style.display = 'block';
-        });
-
-        document.getElementById('btn-install').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                document.getElementById('btn-install').style.display = 'none';
-            }
-        });
-
-        // Detectar si es iPhone para mostrar mensaje personalizado
-        if (/iPhone|iPad|iPod/.test(navigator.userAgent) && !window.navigator.standalone) {
-            document.getElementById('install-text').innerHTML = "<b>iPhone:</b> Toca <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/IOS_Share_Icon.svg/1200px-IOS_Share_Icon.svg.png' width='15'> y luego 'Añadir a pantalla de inicio'.";
-        }
-
-        // --- EL RESTO DEL JUEGO SE MANTIENE IGUAL ---
         let peer, conn, connections = [];
         let isHost = false, isSolo = false, gameFinished = false;
         let myIdInGame = 0;
         let gameState = { deck: [], discard: null, hands: [[],[],[],[]], turn: 0 };
+
         const suits = [{n:'Espadas',s:'⚔️',c:'#1976d2'},{n:'Bastos',s:'🪵',c:'#388e3c'},{n:'Oros',s:'🟡',c:'#fbc02d'},{n:'Copas',s:'🏆',c:'#d32f2f'}];
         const values = [1,2,3,4,5,6,7,10,11,12];
 
+        // --- INICIO DE JUEGO ---
         function startSoloGame() {
             isSolo = true;
             gameState.deck = [];
@@ -167,18 +123,18 @@
         }
 
         function startAsHost() {
-            isHost = true; isSolo = false;
+            isHost = true;
             peer = new Peer('mesa-' + Math.floor(Math.random()*999));
             peer.on('open', id => showWaiting(id));
             peer.on('connection', c => {
-                connections.push(c); updateLobby();
+                connections.push(c);
+                updateLobby();
                 c.on('data', data => handleData(data, connections.indexOf(c) + 1));
             });
             document.getElementById('start-btn').style.display = 'block';
         }
 
         function joinRoom() {
-            isSolo = false;
             const targetId = document.getElementById('join-id').value;
             peer = new Peer();
             peer.on('open', () => {
@@ -190,8 +146,12 @@
 
         function handleData(data, senderIdx) {
             if(data.type === 'START') { gameState = data.state; myIdInGame = data.yourIdx; startGameUI(); }
-            if(data.type === 'UPDATE') { gameState = data.state; checkWin(); render(); }
-            if(data.type === 'EMOJI') { showEmoji(data.emoji); }
+            if(data.type === 'UPDATE') { 
+                gameState = data.state; 
+                checkWin(); // Solo verifica victoria si recibe actualización
+                render(); 
+            }
+            if(data.type === 'EMOJI') showEmoji(data.emoji);
         }
 
         function broadcastStart() {
@@ -214,10 +174,11 @@
             render();
         }
 
+        // --- LÓGICA DE CARTAS ---
         function render() {
             if(gameFinished) return;
             document.getElementById('discard-pile').innerHTML = createCardHTML(gameState.discard);
-            document.getElementById('turn-label').innerText = gameState.turn === myIdInGame ? "TU TURNO" : "TURNO RIVAL";
+            document.getElementById('turn-label').innerText = gameState.turn === myIdInGame ? "TU TURNO" : "ESPERANDO...";
             
             const handDiv = document.getElementById('player-hand');
             handDiv.innerHTML = '';
@@ -232,52 +193,68 @@
                 cardEl.onclick = () => playCard(i);
                 handDiv.appendChild(cardEl);
             });
+
             if(isSolo && gameState.turn === 1) setTimeout(iaMove, 1000);
         }
 
         function playCard(i) {
-            if(gameState.turn !== myIdInGame) return;
+            if(gameState.turn !== myIdInGame || gameFinished) return;
             const card = gameState.hands[myIdInGame][i];
             if(card.suit.n === gameState.discard.suit.n || card.value === gameState.discard.value) {
                 gameState.discard = card;
                 gameState.hands[myIdInGame].splice(i, 1);
+                
+                // Verificar victoria inmediatamente después de tirar
+                if(gameState.hands[myIdInGame].length === 0) {
+                    showWinScreen(myIdInGame);
+                }
+
                 gameState.turn = (gameState.turn + 1) % (isSolo ? 2 : 4);
-                checkWin();
                 if(!isSolo) sync(); else render();
             }
         }
 
         function iaMove() {
-            if(!isSolo || gameState.turn !== 1) return;
+            if(!isSolo || gameState.turn !== 1 || gameFinished) return;
             let possibleCards = gameState.hands[1].filter(c => c.suit.n === gameState.discard.suit.n || c.value === gameState.discard.value);
             if(possibleCards.length > 0) {
-                possibleCards.sort((a,b) => b.value - a.value);
                 let idx = gameState.hands[1].indexOf(possibleCards[0]);
                 gameState.discard = gameState.hands[1].splice(idx, 1)[0];
+                if(gameState.hands[1].length === 0) showWinScreen(1);
             } else if(gameState.deck.length > 0) {
                 gameState.hands[1].push(gameState.deck.pop());
             }
             gameState.turn = 0;
-            checkWin();
             render();
         }
 
         function checkWin() {
+            if(gameFinished) return;
             gameState.hands.forEach((hand, idx) => {
-                if(hand.length === 0 && !gameFinished) {
-                    gameFinished = true;
-                    document.getElementById('win-overlay').style.display = 'flex';
-                    document.getElementById('winner-name').innerText = (idx === myIdInGame) ? "¡GANASTE TÚ!" : "GANÓ JUGADOR " + (idx+1);
-                }
+                if(hand.length === 0) showWinScreen(idx);
             });
         }
 
+        function showWinScreen(idx) {
+            if(gameFinished) return;
+            gameFinished = true;
+            document.getElementById('win-overlay').style.display = 'flex';
+            document.getElementById('winner-name').innerText = (idx === myIdInGame) ? "¡TE LLEVASTE LA PARTIDA!" : "GANÓ JUGADOR " + (idx+1);
+        }
+
         function requestCard() {
-            if(gameState.turn === myIdInGame && gameState.deck.length > 0) {
+            if(gameState.turn !== myIdInGame || gameFinished) return;
+            if(gameState.deck.length > 0) {
                 gameState.hands[myIdInGame].push(gameState.deck.pop());
                 gameState.turn = (gameState.turn + 1) % (isSolo ? 2 : 4);
                 if(!isSolo) sync(); else render();
             }
+        }
+
+        function sync() {
+            if(isHost) connections.forEach(c => c.send({type: 'UPDATE', state: gameState}));
+            else conn.send({type: 'UPDATE', state: gameState});
+            render();
         }
 
         function sendEmoji(e) {
@@ -293,12 +270,6 @@
             setTimeout(() => el.classList.remove('show-float'), 1500);
         }
 
-        function sync() {
-            if(isHost) connections.forEach(c => c.send({type: 'UPDATE', state: gameState}));
-            else conn.send({type: 'UPDATE', state: gameState});
-            render();
-        }
-
         function createCardHTML(card) {
             return `<div class="card-obj" style="color:${card.suit.c}"><b>${card.value}</b><div style="font-size:1.8rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b></div>`;
         }
@@ -307,21 +278,18 @@
             document.getElementById('setup-controls').style.display = 'none';
             document.getElementById('waiting-area').style.display = 'block';
             document.getElementById('my-id').innerText = id;
-            document.getElementById('room-info').innerText = "Mesa Online: " + id;
         }
 
         function updateLobby() {
             document.getElementById('player-count').innerText = connections.length + 1;
         }
+
+        // Service Worker para instalación
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
+            });
+        }
     </script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('Service Worker registrado'))
-        .catch(err => console.log('Error al registrar SW', err));
-    });
-  }
-</script>
 </body>
 </html>
