@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>TRUCO-STACK ONLINE ARENA</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TrucoStack">
+    <link rel="apple-touch-icon" href="https://github.com/joaco-games/juegos/blob/main/icono..png?raw=true">
+
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
         :root { --gold: #ffd700; --green: radial-gradient(circle, #1b5e20, #0a3d1d); --red: #ff1744; }
@@ -13,9 +20,8 @@
         .overlay:not(.active) { display: none; }
         .menu-card { background: rgba(0,0,0,0.7); padding: 25px; border-radius: 30px; border: 2px solid var(--gold); width: 85%; max-width: 400px; backdrop-filter: blur(10px); margin: 20px; }
         
-        /* Estilo Reglas e Instalación */
         .info-section { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; margin: 15px 0; text-align: left; font-size: 0.85rem; line-height: 1.4; border-left: 4px solid var(--gold); }
-        .install-guide { font-size: 0.8rem; color: #4fc3f7; margin-top: 10px; }
+        .install-guide { font-size: 0.8rem; color: #4fc3f7; margin-top: 10px; padding: 10px; border: 1px dashed #4fc3f7; border-radius: 10px; }
 
         input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; text-align: center; font-size: 1.1rem; }
         .btn { background: linear-gradient(to bottom, #ffeb3b, #fbc02d); border: none; padding: 15px; font-size: 1.1rem; font-weight: bold; border-radius: 50px; color: #3e2723; cursor: pointer; width: 100%; margin: 8px 0; box-shadow: 0 4px 0 #bda06d; }
@@ -41,7 +47,6 @@
         .show-float { animation: floatUp 1.5s forwards; }
         @keyframes floatUp { 0% { opacity: 0; transform: scale(0.5); } 20% { opacity: 1; transform: scale(1.3); } 100% { opacity: 0; transform: translateY(-100px); } }
 
-        /* Cartel de Victoria */
         #win-overlay { background: rgba(0,0,0,0.9); z-index: 5000; display: none; flex-direction: column; justify-content: center; align-items: center; }
         .win-banner { color: var(--gold); font-size: 3rem; text-shadow: 0 0 20px var(--gold); animation: pulse 1s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
@@ -55,16 +60,16 @@
             <h2 style="color:var(--gold); margin:5px 0;">TRUCO-STACK</h2>
             
             <div class="info-section">
-                <strong>📝 REGLAS:</strong><br>
-                • Coincide <b>Palo o Número</b> para tirar.<br>
-                • Cartas <b>1, 2, 3</b> valen doble puntaje.<br>
-                • ¡Gana el primero en quedarse sin cartas!
+                <strong>📝 REGLAS RÁPIDAS:</strong><br>
+                • Tira carta del mismo <b>Palo o Número</b>.<br>
+                • El <b>1 de Espadas</b> limpia la mesa.<br>
+                • Los <b>1, 2 y 3</b> dan puntos extra.
             </div>
 
-            <div class="install-guide">
-                <strong>📲 INSTALAR COMO APP:</strong><br>
-                <b>Android:</b> Tres puntos (⋮) -> "Instalar aplicación".<br>
-                <b>iPhone:</b> Botón Compartir (📤) -> "Añadir a pantalla de inicio".
+            <div class="install-guide" id="install-area">
+                <strong>📲 INSTALAR:</strong><br>
+                <span id="install-text">Buscando opción de instalación...</span>
+                <button id="btn-install" class="btn-blue" style="display:none; padding:5px; font-size:0.8rem; margin-top:5px;">INSTALAR AHORA</button>
             </div>
 
             <div id="setup-controls" style="margin-top:15px;">
@@ -105,7 +110,7 @@
         <div class="chat-pills">
             <div class="pill" onclick="sendEmoji('🔥')">🔥</div>
             <div class="pill" onclick="sendEmoji('🤡')">🤡</div>
-            <div class="pill" onclick="sendEmoji('⚔️')">⚔️</div>
+            <div class="pill" onclick="sendEmoji('🤫')">🤫</div>
             <div class="pill" onclick="sendEmoji('😜')">😜</div>
             <div class="pill" onclick="sendEmoji('👎')">👎</div>
         </div>
@@ -116,11 +121,34 @@
     </div>
 
     <script>
+        // --- LÓGICA DE INSTALACIÓN ---
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-text').innerText = "¡Listo para Android!";
+            document.getElementById('btn-install').style.display = 'block';
+        });
+
+        document.getElementById('btn-install').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                document.getElementById('btn-install').style.display = 'none';
+            }
+        });
+
+        // Detectar si es iPhone para mostrar mensaje personalizado
+        if (/iPhone|iPad|iPod/.test(navigator.userAgent) && !window.navigator.standalone) {
+            document.getElementById('install-text').innerHTML = "<b>iPhone:</b> Toca <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/IOS_Share_Icon.svg/1200px-IOS_Share_Icon.svg.png' width='15'> y luego 'Añadir a pantalla de inicio'.";
+        }
+
+        // --- EL RESTO DEL JUEGO SE MANTIENE IGUAL ---
         let peer, conn, connections = [];
         let isHost = false, isSolo = false, gameFinished = false;
         let myIdInGame = 0;
         let gameState = { deck: [], discard: null, hands: [[],[],[],[]], turn: 0 };
-
         const suits = [{n:'Espadas',s:'⚔️',c:'#1976d2'},{n:'Bastos',s:'🪵',c:'#388e3c'},{n:'Oros',s:'🟡',c:'#fbc02d'},{n:'Copas',s:'🏆',c:'#d32f2f'}];
         const values = [1,2,3,4,5,6,7,10,11,12];
 
