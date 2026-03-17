@@ -4,15 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>STACK & WIN</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icono.png">
     
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://github.com/joaco-games/juegos/blob/main/icono..png?raw=true">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a3d1d">
+
     <style>
-        /* CSS INTEGRADO */
+        /* CSS INTEGRADO - Estilo Gaucho-Punk Premium */
         :root {
             --gold: #ffd700;
             --green-bg: radial-gradient(circle, #1b5e20, #0a3d1d);
             --red-uno: #ff1744;
+            --leather: #3e2723;
         }
 
         body {
@@ -21,14 +26,16 @@
             color: white; overflow: hidden; touch-action: manipulation;
         }
 
+        /* Pantalla de Carga/Menú */
         .overlay {
             position: fixed; inset: 0; background: var(--green-bg);
             z-index: 1000; display: flex; justify-content: center; align-items: center;
-            transition: 0.5s ease; visibility: visible;
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .overlay:not(.active) { opacity: 0; visibility: hidden; pointer-events: none; }
+        .overlay:not(.active) { opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-100%); }
 
-        .menu-content { text-align: center; width: 85%; }
+        .menu-content { text-align: center; width: 85%; max-width: 400px; }
+        
         .menu-icon { 
             width: 140px; height: 140px; border-radius: 35px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
@@ -43,40 +50,52 @@
             background: linear-gradient(to bottom, #ffeb3b, #fbc02d);
             border: none; padding: 20px 60px; font-size: 1.6rem; font-weight: bold;
             border-radius: 60px; color: #3e2723; box-shadow: 0 8px 0 #bda06d;
-            cursor: pointer;
+            cursor: pointer; transition: 0.1s;
         }
+        .btn-play:active { transform: translateY(4px); box-shadow: 0 4px 0 #bda06d; }
 
-        #game-container { height: 100vh; background: var(--green-bg); display: flex; flex-direction: column; }
+        /* Interfaz de Juego */
+        #game-container { height: 100vh; background: var(--green-bg); display: flex; flex-direction: column; visibility: hidden; }
+        #game-container.active { visibility: visible; }
         
-        .header { display: flex; justify-content: space-between; padding: 50px 20px 10px; }
+        .header { display: flex; justify-content: space-between; padding: 50px 20px 10px; z-index: 10; }
         .stat-box { background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 25px; border: 1.5px solid var(--gold); font-weight: bold; }
 
-        .table { flex: 1; display: flex; justify-content: center; align-items: center; gap: 20px; }
+        .table { flex: 1; display: flex; justify-content: center; align-items: center; gap: 25px; }
+        
+        /* Slots de Cartas */
         .card-slot { 
-            width: 100px; height: 150px; 
+            width: 95px; height: 145px; 
             border: 2.5px dashed rgba(255,255,255,0.3); 
             border-radius: 15px; position: relative; 
             display: flex; align-items: center; justify-content: center;
         }
 
+        /* Objeto Carta */
         .card-obj {
-            width: 100px; height: 150px; background: white; border-radius: 12px;
+            width: 95px; height: 145px; background: white; border-radius: 12px;
             color: black; display: flex; flex-direction: column; justify-content: space-between;
             padding: 12px; box-sizing: border-box; box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: absolute;
         }
 
-        .hand { display: flex; justify-content: center; padding: 30px 15px 50px; height: 160px; }
-        .hand .card-obj { margin-left: -50px; cursor: pointer; transform-origin: bottom center; }
+        /* Mano del Jugador */
+        .hand { display: flex; justify-content: center; padding: 30px 15px 50px; height: 160px; z-index: 5; }
+        .hand .card-obj { margin-left: -50px; cursor: pointer; transform-origin: bottom center; position: relative; }
+        .hand .card-obj:active { transform: translateY(-40px) scale(1.15) rotate(0deg) !important; z-index: 100; }
 
+        /* Anuncios */
         #announcement {
             position: fixed; top: 40%; width: 100%; text-align: center;
             font-size: 2.2rem; color: var(--gold); text-shadow: 0 0 15px #000;
-            pointer-events: none; opacity: 0; z-index: 2000;
+            pointer-events: none; opacity: 0; z-index: 2000; font-weight: bold;
         }
-        .show-msg { animation: msgPop 1.2s forwards; }
+        .show-msg { animation: msgPop 1.3s forwards; }
         @keyframes msgPop {
             0% { opacity: 0; transform: scale(0.5); }
             30% { opacity: 1; transform: scale(1.1); }
+            80% { opacity: 1; transform: scale(1); }
             100% { opacity: 0; transform: translateY(-60px); }
         }
     </style>
@@ -85,7 +104,7 @@
 
     <div id="start-screen" class="overlay active">
         <div class="menu-content">
-            <img src="icono.png" alt="Icono" class="menu-icon">
+            <img src="https://github.com/joaco-games/juegos/blob/main/icono..png?raw=true" alt="Icono" class="menu-icon">
             <h1 class="logo">STACK <span class="uno-color">& WIN</span></h1>
             <button onclick="startGame()" class="btn-play">¡A JUGAR!</button>
         </div>
@@ -97,19 +116,21 @@
             <div class="stat-box">🎴 <span id="deck-count">40</span></div>
         </div>
         <div class="table">
-            <div id="deck" class="card-slot" style="background:rgba(255,255,255,0.1);" onclick="drawCard()">
-                <b style="color:rgba(255,255,255,0.5)">MAZO</b>
+            <div id="deck" class="card-slot" style="background:rgba(255,255,255,0.1); cursor:pointer;" onclick="drawCard()">
+                <b style="color:rgba(255,255,255,0.4)">MAZO</b>
             </div>
-            <div id="discard-pile" class="card-slot"></div>
+            <div id="discard-pile" class="card-slot">
+                </div>
         </div>
         <div id="announcement"></div>
         <div class="hand-area">
-            <div id="player-hand" class="hand"></div>
+            <div id="player-hand" class="hand">
+                </div>
         </div>
     </div>
 
     <script>
-        /* JAVASCRIPT INTEGRADO */
+        /* JAVASCRIPT INTEGRADO - Lógica de Juego Unificada */
         const suits = [
             {n: 'Espadas', s: '⚔️', c: '#1976d2'},
             {n: 'Bastos', s: '🪵', c: '#388e3c'},
@@ -121,6 +142,7 @@
 
         function startGame() {
             document.getElementById('start-screen').classList.remove('active');
+            document.getElementById('game-container').classList.add('active');
             initGame();
         }
 
@@ -128,6 +150,7 @@
             deck = [];
             suits.forEach(s => values.forEach(v => deck.push({ suit: s, value: v })));
             deck.sort(() => Math.random() - 0.5);
+            
             discardCard = deck.pop();
             hand = [];
             for (let i = 0; i < 5; i++) hand.push(deck.pop());
@@ -145,7 +168,9 @@
                 const el = document.createElement('div');
                 el.innerHTML = createCardHTML(card);
                 const cardEl = el.firstChild;
-                cardEl.style.transform = `rotate(${(i - hand.length/2)*6}deg)`;
+                // Efecto abanico
+                const angle = (i - hand.length/2) * 7;
+                cardEl.style.transform = `rotate(${angle}deg)`;
                 cardEl.onclick = () => playCard(i);
                 handDiv.appendChild(cardEl);
             });
@@ -155,7 +180,7 @@
             return `
                 <div class="card-obj">
                     <b style="color:${card.suit.c}">${card.value}</b>
-                    <div style="font-size:2.8rem; text-align:center">${card.suit.s}</div>
+                    <div style="font-size:3rem; text-align:center">${card.suit.s}</div>
                     <b style="align-self:flex-end; transform:rotate(180deg); color:${card.suit.c}">${card.value}</b>
                 </div>
             `;
@@ -163,10 +188,18 @@
 
         function playCard(i) {
             const card = hand[i];
+            // Regla estilo UNO: mismo palo o mismo valor
             if (card.suit.n === discardCard.suit.n || card.value === discardCard.value) {
+                if(navigator.vibrate) navigator.vibrate(40);
                 discardCard = card;
                 hand.splice(i, 1);
                 score += 10;
+                
+                // Bonus de Truco por cartas altas
+                if(card.value === 1) score += 20;
+                if(card.value === 2) score += 15;
+                if(card.value === 3) score += 10;
+
                 render();
                 if(hand.length === 0) {
                     notify("¡MANO GANADA!");
@@ -174,6 +207,7 @@
                 }
             } else {
                 notify("¡No coincide!");
+                if(navigator.vibrate) navigator.vibrate([50, 100, 50]);
             }
         }
 
@@ -188,7 +222,7 @@
             const el = document.getElementById('announcement');
             el.innerText = txt;
             el.classList.add('show-msg');
-            setTimeout(() => el.classList.remove('show-msg'), 1200);
+            setTimeout(() => el.classList.remove('show-msg'), 1300);
         }
     </script>
 </body>
