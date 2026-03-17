@@ -1,27 +1,44 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="manifest" href="manifest.json">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TrucoUno">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<meta name="theme-color" content="#1b5e20">
     <meta charset="UTF-8">
-    <title>Truco-Uno Solitaire</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Truco-Uno: La Revancha Solitaria</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="game-container">
-        <h1>Truco-Uno Solitaire</h1>
-        <div class="stats">
-            <p>Puntos: <span id="score">0</span></p>
-            <p>Mazo: <span id="deck-count">40</span></p>
-        </div>
-        
-        <div class="board">
-            <div id="discard-pile" class="card">?</div>
-            <div id="deck" class="card back">MAZO</div>
+    <div id="game-ui">
+        <div class="top-bar">
+            <div class="stat">🏆 <span id="score">0</span></div>
+            <div class="stat">🎴 <span id="deck-count">40</span></div>
         </div>
 
-        <div id="player-hand" class="hand"></div>
+        <div class="play-area">
+            <div id="deck" class="card-slot deck-stack" onclick="drawCard()">
+                <div class="card-back"></div>
+            </div>
+            <div id="discard-pile" class="card-slot">
+                </div>
+        </div>
+
+        <div id="msg-box">¡Tu turno!</div>
+
+        <div class="hand-container">
+            <div id="player-hand" class="hand"></div>
+        </div>
         
-        <p id="msg">¡Juega una carta que coincida en palo o número!</p>
-        <button onclick="drawCard()">Robar Carta</button>
+        <div class="controls">
+            <button onclick="checkEnvido()" class="btn-truco">ENVIDO</button>
+            <button onclick="drawCard()" class="btn-draw">ROBAR</button>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
