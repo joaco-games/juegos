@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Truco-Uno Solitaire</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>Truco-Uno Solitaire</h1>
+        <div class="stats">
+            <p>Puntos: <span id="score">0</span></p>
+            <p>Mazo: <span id="deck-count">40</span></p>
+        </div>
+        
+        <div class="board">
+            <div id="discard-pile" class="card">?</div>
+            <div id="deck" class="card back">MAZO</div>
+        </div>
+
+        <div id="player-hand" class="hand"></div>
+        
+        <p id="msg">¡Juega una carta que coincida en palo o número!</p>
+        <button onclick="drawCard()">Robar Carta</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
