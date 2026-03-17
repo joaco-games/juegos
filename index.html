@@ -3,213 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TRUCO-STACK ARENA</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="https://github.com/joaco-games/juegos/blob/main/icono..png?raw=true">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>TRUCO-STACK ONLINE</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
-        :root { --gold: #ffd700; --green-bg: radial-gradient(circle, #1b5e20, #0a3d1d); --red: #ff1744; }
-        body { margin: 0; background: #000; font-family: sans-serif; color: white; overflow: hidden; touch-action: manipulation; }
+        :root { --gold: #ffd700; --green: radial-gradient(circle, #1b5e20, #0a3d1d); --red: #ff1744; }
+        body { margin: 0; background: #000; font-family: 'Segoe UI', sans-serif; color: white; overflow: hidden; }
         
-        .overlay { position: fixed; inset: 0; background: var(--green-bg); z-index: 1000; display: flex; justify-content: center; align-items: center; transition: 0.5s; text-align: center; }
-        .overlay:not(.active) { opacity: 0; visibility: hidden; transform: translateY(-100%); }
+        /* Menú Online */
+        .overlay { position: fixed; inset: 0; background: var(--green); z-index: 1000; display: flex; justify-content: center; align-items: center; text-align: center; }
+        .overlay:not(.active) { display: none; }
+        .menu-card { background: rgba(0,0,0,0.6); padding: 30px; border-radius: 30px; border: 2px solid var(--gold); width: 80%; max-width: 400px; backdrop-filter: blur(10px); }
         
-        .menu-card { background: rgba(0,0,0,0.4); padding: 25px; border-radius: 30px; border: 2px solid var(--gold); width: 85%; max-width: 400px; backdrop-filter: blur(10px); }
-        .btn { background: linear-gradient(to bottom, #ffeb3b, #fbc02d); border: none; padding: 15px; font-size: 1.2rem; font-weight: bold; border-radius: 50px; color: #3e2723; cursor: pointer; width: 100%; margin: 10px 0; box-shadow: 0 4px 0 #bda06d; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; text-align: center; font-size: 1.1rem; }
+        .btn { background: linear-gradient(to bottom, #ffeb3b, #fbc02d); border: none; padding: 15px; font-size: 1.1rem; font-weight: bold; border-radius: 50px; color: #3e2723; cursor: pointer; width: 100%; margin: 5px 0; }
         
-        #game-container { height: 100vh; background: var(--green-bg); display: flex; flex-direction: column; visibility: hidden; }
-        #game-container.active { visibility: visible; }
-        
+        /* Juego */
+        #game-ui { height: 100vh; display: none; flex-direction: column; background: var(--green); }
         .header { display: flex; justify-content: space-between; padding: 45px 20px 10px; }
-        .stat { background: rgba(0,0,0,0.6); padding: 8px 15px; border-radius: 20px; border: 1px solid var(--gold); font-size: 0.8rem; }
+        .status-bar { background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 15px; border: 1px solid var(--gold); font-size: 0.8rem; }
         
         .table { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
-        .turn-indicator { font-size: 1.2rem; color: var(--gold); font-weight: bold; text-shadow: 0 2px 4px #000; }
+        .card-slot { width: 85px; height: 130px; border: 2px dashed rgba(255,255,255,0.3); border-radius: 12px; position: relative; display: flex; align-items: center; justify-content: center; }
         
-        .slots { display: flex; gap: 20px; }
-        .card-slot { width: 80px; height: 120px; border: 2px dashed rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .card-obj { width: 85px; height: 130px; background: white; border-radius: 10px; color: black; display: flex; flex-direction: column; justify-content: space-between; padding: 10px; box-sizing: border-box; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: absolute; }
+
+        .hand-area { height: 160px; width: 100%; position: relative; margin-bottom: 30px; }
+        .hand { display: flex; justify-content: center; }
+        .hand .card-obj { position: absolute; cursor: pointer; transition: 0.2s; bottom: 0; }
         
-        .card-obj { width: 80px; height: 120px; background: white; border-radius: 8px; color: black; display: flex; flex-direction: column; justify-content: space-between; padding: 8px; box-sizing: border-box; box-shadow: 0 4px 10px rgba(0,0,0,0.5); position: absolute; }
-        .card-hidden { background: #3e2723; border: 2px solid var(--gold); }
-
-        .hand-area { height: 160px; position: relative; width: 100%; margin-bottom: 20px; }
-        .hand { display: flex; justify-content: center; width: 100%; position: absolute; bottom: 0; }
-        .hand .card-obj { position: absolute; cursor: pointer; transition: 0.3s; }
-
-        #announcement { position: fixed; top: 35%; width: 100%; text-align: center; font-size: 2rem; color: var(--gold); text-shadow: 0 0 10px #000; pointer-events: none; opacity: 0; z-index: 2000; }
-        .pop { animation: pop 1.2s forwards; }
-        @keyframes pop { 0% { opacity: 0; transform: scale(0.5); } 20% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0; transform: translateY(-30px); } }
-
-        /* Pantalla Intermedia para Multijugador */
-        #pass-screen { background: #000; z-index: 3000; }
+        #msg { position: fixed; top: 30%; width: 100%; text-align: center; font-size: 1.5rem; color: var(--gold); pointer-events: none; z-index: 2000; text-shadow: 2px 2px 5px #000; }
     </style>
 </head>
 <body>
 
-    <div id="start-screen" class="overlay active">
+    <div id="lobby" class="overlay active">
         <div class="menu-card">
-            <h1 style="margin:0; color:var(--gold)">TRUCO-STACK</h1>
-            <p style="font-size:0.8rem; opacity:0.8">Joaco Games & AI</p>
-            <button class="btn" onclick="initMode('solo')">SOLITARIO (VS IA)</button>
-            <button class="btn" onclick="initMode('multi')">4 JUGADORES (LOCAL)</button>
+            <img src="https://github.com/joaco-games/juegos/blob/main/icono..png?raw=true" style="width:80px; border-radius:20px; border:2px solid var(--gold)">
+            <h2 style="color:var(--gold)">ONLINE ARENA</h2>
+            
+            <div id="setup-controls">
+                <button class="btn" onclick="startAsHost()">CREAR MESA</button>
+                <div style="margin: 15px 0; opacity: 0.5;">— O —</div>
+                <input type="text" id="join-id" placeholder="ID de la Mesa">
+                <button class="btn" onclick="joinRoom()">UNIRSE A MESA</button>
+            </div>
+            
+            <div id="waiting-area" style="display:none;">
+                <p>Tu ID de Mesa: <b id="my-id" style="color:var(--gold)">...</b></p>
+                <p>Jugadores conectados: <span id="player-count">1</span>/4</p>
+                <button class="btn" id="start-btn" style="display:none;" onclick="broadcastStart()">EMPEZAR JUEGO</button>
+            </div>
         </div>
     </div>
 
-    <div id="pass-screen" class="overlay">
-        <div class="menu-card">
-            <h2 id="pass-msg">Jugador 1, es tu turno</h2>
-            <button class="btn" onclick="hidePassScreen()">VER MIS CARTAS</button>
-        </div>
-    </div>
-
-    <div id="game-container">
+    <div id="game-ui">
         <div class="header">
-            <div class="stat">Puntos: <span id="score">0</span></div>
-            <div class="stat">Mazo: <span id="deck-count">40</span></div>
+            <div class="status-bar">ID: <span id="room-label"></span></div>
+            <div class="status-bar">TURNO: <b id="turn-label">Esperando...</b></div>
         </div>
         
         <div class="table">
-            <div id="current-turn" class="turn-indicator">Esperando...</div>
-            <div class="slots">
-                <div class="card-slot" onclick="drawCard()" style="background:rgba(255,255,255,0.05)">ROBAR</div>
+            <div id="msg"></div>
+            <div style="display:flex; gap:20px;">
+                <div class="card-slot" onclick="requestCard()">MAZO</div>
                 <div id="discard-pile" class="card-slot"></div>
             </div>
         </div>
 
-        <div id="announcement"></div>
-        <div class="hand-area"><div id="player-hand" class="hand"></div></div>
+        <div class="hand-area">
+            <div id="player-hand" class="hand"></div>
+        </div>
     </div>
 
     <script>
+        let peer, conn, connections = [];
+        let isHost = false;
+        let myIdInGame = 0;
+        let gameState = {
+            deck: [],
+            discard: null,
+            hands: [],
+            turn: 0,
+            scores: [0,0,0,0]
+        };
+
         const suits = [{n:'Espadas',s:'⚔️',c:'#1976d2'},{n:'Bastos',s:'🪵',c:'#388e3c'},{n:'Oros',s:'🟡',c:'#fbc02d'},{n:'Copas',s:'🏆',c:'#d32f2f'}];
         const values = [1,2,3,4,5,6,7,10,11,12];
-        let deck=[], players=[], currentPlayer=0, discardCard=null, gameMode='solo';
 
-        function initMode(mode) {
-            gameMode = mode;
-            document.getElementById('start-screen').classList.remove('active');
-            document.getElementById('game-container').classList.add('active');
-            setupGame();
+        // INICIAR COMO HOST
+        function startAsHost() {
+            isHost = true;
+            peer = new Peer('mesa-' + Math.floor(Math.random()*9999));
+            peer.on('open', id => {
+                showWaiting(id);
+                document.getElementById('start-btn').style.display = 'block';
+            });
+            peer.on('connection', c => {
+                if(connections.length >= 3) return c.close();
+                connections.push(c);
+                updateLobby();
+                c.on('data', data => handleData(data, connections.indexOf(c) + 1));
+            });
         }
 
-        function setupGame() {
-            deck = [];
-            suits.forEach(s => values.forEach(v => deck.push({suit:s, value:v})));
-            deck.sort(() => Math.random() - 0.5);
-            
-            players = [];
-            let numPlayers = gameMode === 'solo' ? 2 : 4;
-            for(let i=0; i<numPlayers; i++) {
-                players.push({ id: i, name: i===0?'Tú':(gameMode==='solo'?'IA':'J'+(i+1)), hand: [], score: 0 });
-                for(let j=0; j<5; j++) players[i].hand.push(deck.pop());
+        // UNIRSE A UNA MESA
+        function joinRoom() {
+            const targetId = document.getElementById('join-id').value;
+            peer = new Peer();
+            peer.on('open', () => {
+                conn = peer.connect(targetId);
+                conn.on('open', () => {
+                    showWaiting(targetId);
+                    document.getElementById('waiting-area').innerHTML = "<p>Conectado. Esperando al anfitrión...</p>";
+                });
+                conn.on('data', data => handleData(data, 0));
+            });
+        }
+
+        function handleData(data, senderIndex) {
+            if(data.type === 'START') {
+                gameState = data.state;
+                myIdInGame = isHost ? 0 : senderIndex || connections.length; // Simplificado
+                startGameUI();
             }
-            discardCard = deck.pop();
-            currentPlayer = 0;
+            if(data.type === 'UPDATE') {
+                gameState = data.state;
+                render();
+            }
+        }
+
+        function broadcastStart() {
+            // Crear mazo y repartir
+            gameState.deck = [];
+            suits.forEach(s => values.forEach(v => gameState.deck.push({suit:s, value:v})));
+            gameState.deck.sort(() => Math.random() - 0.5);
+            
+            for(let i=0; i<4; i++) {
+                gameState.hands[i] = [];
+                for(let j=0; j<5; j++) gameState.hands[i].push(gameState.deck.pop());
+            }
+            gameState.discard = gameState.deck.pop();
+            
+            connections.forEach((c, idx) => {
+                c.send({type: 'START', state: gameState, playerIdx: idx + 1});
+            });
+            myIdInGame = 0;
+            startGameUI();
+        }
+
+        function startGameUI() {
+            document.getElementById('lobby').classList.remove('active');
+            document.getElementById('game-ui').style.display = 'flex';
             render();
         }
 
         function render() {
-            document.getElementById('discard-pile').innerHTML = createCardHTML(discardCard);
-            document.getElementById('deck-count').innerText = deck.length;
-            document.getElementById('score').innerText = players[0].score;
-            document.getElementById('current-turn').innerText = `Turno de: ${players[currentPlayer].name}`;
-
+            document.getElementById('discard-pile').innerHTML = createCardHTML(gameState.discard);
+            document.getElementById('turn-label').innerText = gameState.turn === myIdInGame ? "TU TURNO" : "JUGADOR " + (gameState.turn + 1);
+            
             const handDiv = document.getElementById('player-hand');
             handDiv.innerHTML = '';
+            const myHand = gameState.hands[myIdInGame] || [];
             
-            // Si es modo multi y no es el turno visible, ocultamos
-            let activeHand = players[currentPlayer].hand;
-            const cardWidth = 80;
-            const containerWidth = window.innerWidth;
-            const overlap = Math.min(cardWidth - 10, (activeHand.length * cardWidth - containerWidth) / (activeHand.length - 1));
-            
-            activeHand.forEach((card, i) => {
+            myHand.forEach((card, i) => {
                 const cardEl = document.createElement('div');
                 cardEl.className = 'card-obj';
                 cardEl.innerHTML = `<b>${card.value}</b><div style="font-size:2rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b>`;
                 cardEl.style.color = card.suit.c;
-                cardEl.style.left = `${(containerWidth - (activeHand.length*cardWidth - (activeHand.length-1)*overlap))/2 + i*(cardWidth-overlap)}px`;
-                cardEl.style.zIndex = i;
+                cardEl.style.left = `calc(50% - 40px + ${(i - (myHand.length-1)/2)*50}px)`;
                 cardEl.onclick = () => playCard(i);
                 handDiv.appendChild(cardEl);
             });
         }
 
         function playCard(i) {
-            if (gameMode === 'solo' && currentPlayer !== 0) return;
+            if(gameState.turn !== myIdInGame) return showMsg("No es tu turno");
+            const card = gameState.hands[myIdInGame][i];
             
-            const card = players[currentPlayer].hand[i];
-            if (card.suit.n === discardCard.suit.n || card.value === discardCard.value) {
-                discardCard = card;
-                players[currentPlayer].hand.splice(i, 1);
-                players[currentPlayer].score += (card.value <= 3 ? 50 : 10);
-                
-                if(players[currentPlayer].hand.length === 0) {
-                    alert("¡GANÓ " + players[currentPlayer].name + "!");
-                    location.reload();
-                    return;
-                }
-                nextTurn();
+            if(card.suit.n === gameState.discard.suit.n || card.value === gameState.discard.value) {
+                gameState.discard = card;
+                gameState.hands[myIdInGame].splice(i, 1);
+                gameState.turn = (gameState.turn + 1) % 4;
+                sync();
             } else {
-                notify("¡Carta no válida!");
+                showMsg("Carta no válida");
             }
         }
 
-        function nextTurn() {
-            currentPlayer = (currentPlayer + 1) % players.length;
-            if (gameMode === 'solo' && currentPlayer === 1) {
+        function requestCard() {
+            if(gameState.turn !== myIdInGame) return;
+            if(gameState.deck.length > 0) {
+                gameState.hands[myIdInGame].push(gameState.deck.pop());
+                gameState.turn = (gameState.turn + 1) % 4;
+                sync();
+            }
+        }
+
+        function sync() {
+            if(isHost) {
+                connections.forEach(c => c.send({type: 'UPDATE', state: gameState}));
                 render();
-                setTimeout(iaPlay, 1000);
-            } else if (gameMode === 'multi') {
-                showPassScreen();
             } else {
-                render();
+                conn.send({type: 'UPDATE', state: gameState});
             }
-        }
-
-        function iaPlay() {
-            let possibleMoves = players[1].hand.filter(c => c.suit.n === discardCard.suit.n || c.value === discardCard.value);
-            if (possibleMoves.length > 0) {
-                // La IA tira la carta de más valor de truco si puede
-                possibleMoves.sort((a,b) => a.value - b.value);
-                let move = players[1].hand.indexOf(possibleMoves[0]);
-                discardCard = players[1].hand[move];
-                players[1].hand.splice(move, 1);
-                notify("IA jugó " + discardCard.value);
-            } else {
-                if(deck.length > 0) players[1].hand.push(deck.pop());
-                notify("IA robó carta");
-            }
-            nextTurn();
-        }
-
-        function drawCard() {
-            if (gameMode === 'solo' && currentPlayer !== 0) return;
-            if(deck.length > 0) {
-                players[currentPlayer].hand.push(deck.pop());
-                nextTurn();
-            }
-        }
-
-        function showPassScreen() {
-            document.getElementById('pass-msg').innerText = `Turno de ${players[currentPlayer].name}. Pasa el celular.`;
-            document.getElementById('pass-screen').classList.add('active');
-        }
-
-        function hidePassScreen() {
-            document.getElementById('pass-screen').classList.remove('active');
-            render();
         }
 
         function createCardHTML(card) {
             return `<div class="card-obj" style="color:${card.suit.c}"><b>${card.value}</b><div style="font-size:2rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b></div>`;
         }
 
-        function notify(txt) {
-            const el = document.getElementById('announcement');
-            el.innerText = txt; el.className = 'pop';
-            setTimeout(() => el.className = '', 1200);
+        function showMsg(t) {
+            const m = document.getElementById('msg');
+            m.innerText = t;
+            setTimeout(() => m.innerText = "", 1500);
+        }
+
+        function showWaiting(id) {
+            document.getElementById('setup-controls').style.display = 'none';
+            document.getElementById('waiting-area').style.display = 'block';
+            document.getElementById('my-id').innerText = id;
+            document.getElementById('room-label').innerText = id;
+        }
+
+        function updateLobby() {
+            document.getElementById('player-count').innerText = connections.length + 1;
         }
     </script>
 </body>
