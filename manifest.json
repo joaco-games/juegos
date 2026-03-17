@@ -1,25 +1,23 @@
 {
   "short_name": "TrucoUno",
-  "name": "Truco-Uno Solitaire Hybrid",
-  "description": "Un juego híbrido de cartas: Truco, Uno y Solitario.",
+  "name": "TRUCO-UNO: Stack & Win",
+  "description": "Híbrido de cartas: Truco, Uno y Solitario.",
   "icons": [
     {
-      "src": "icon-192.png",
-      "type": "image/png",
-      "sizes": "192x192"
+      "src": "icono.jpg",
+      "type": "image/jpeg",
+      "sizes": "1024x1024"
     },
     {
-      "src": "icon-512.png",
-      "type": "image/png",
-      "sizes": "512x512",
+      "src": "icono.jpg",
+      "type": "image/jpeg",
+      "sizes": "192x192",
       "purpose": "any maskable"
     }
   ],
   "start_url": "./index.html",
-  "background_color": "#1b5e20",
+  "background_color": "#0a3d1d",
   "display": "standalone",
-  "scope": "./",
-  "theme_color": "#1b5e20",
-  "orientation": "portrait-primary",
-  "categories": ["games", "entertainment"]
+  "theme_color": "#0a3d1d",
+  "orientation": "portrait"
 }
