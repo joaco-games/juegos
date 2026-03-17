@@ -4,13 +4,13 @@
   "description": "Híbrido de cartas: Truco, Uno y Solitario.",
   "icons": [
     {
-      "src": "icono.jpg",
-      "type": "image/jpeg",
+      "src": "icono.png",
+      "type": "image/png",
       "sizes": "1024x1024"
     },
     {
-      "src": "icono.jpg",
-      "type": "image/jpeg",
+      "src": "icono.png",
+      "type": "image/png",
       "sizes": "192x192",
       "purpose": "any maskable"
     }
