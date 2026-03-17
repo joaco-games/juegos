@@ -3,84 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TRUCO-UNO: La Revancha</title>
-  <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="TrucoUno">
-<link rel="apple-touch-icon" href="icon-192.png">
+    <title>TRUCO-UNO: Stack & Win</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icono.jpg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div id="start-screen" class="overlay active">
-        <div class="menu-content tallado">
-            <h1 class="logo">TRUCO<span class="uno-color">UNO</span></h1>
-            <p class="subtitle">La Revancha Solitaria</p>
-            <button onclick="startGame()" class="btn-jugara">¡JUGAR MANO!</button>
-            <div class="menu-subs">
-                <button onclick="toggleOverlay('rules-overlay')">Reglas</button>
-                <button onclick="toggleOverlay('credits-overlay')">Créditos</button>
+        <div class="menu-content">
+            <img src="icono.jpg" alt="Icono" class="menu-icon">
+            <h1 class="logo">STACK <span class="uno-color">& WIN</span></h1>
+            <button onclick="startGame()" class="btn-play">¡REPARTIR!</button>
+            <div class="menu-footer">
+                <button onclick="alert('Reglas: Coincide palo o número. Los 1 valen doble. El 1 de espada limpia la mesa.')">REGLAS</button>
             </div>
         </div>
     </div>
 
-    <div id="rules-overlay" class="overlay">
-        <div class="menu-content paper">
-            <h2>Reglas de la Mesa</h2>
-            <div class="scroll-text">
-                <p><strong>Objetivo:</strong> Descartar toda tu mano en la pila central.</p>
-                <p><strong>Mecánica Uno:</strong> Juega una carta que coincida en <strong>Palo</strong> o <strong>Número</strong> con la del centro.</p>
-                <p><strong>Poder del Truco:</strong> Las cartas tienen la jerarquía del Truco. Jugar cartas altas da más puntos.</p>
-                <p><strong>Bonus "Ancho":</strong> Los 1 de Espada y Basto limpian la mesa (suman puntos y cambian la carta central aleatoriamente).</p>
-                <p><strong>Robar:</strong> Si no tienes juego, toca el mazo.</p>
+    <div id="game-container">
+        <div class="header">
+            <div class="score-badge">🏆 <span id="score">0</span></div>
+            <div class="deck-badge">🎴 <span id="deck-count">40</span></div>
+        </div>
+
+        <div class="table">
+            <div id="deck" class="card deck" onclick="drawCard()">
+                <div class="card-inner back"></div>
             </div>
-            <button onclick="toggleOverlay('rules-overlay')" class="btn-close">Entendido</button>
-        </div>
-    </div>
-
-    <div id="credits-overlay" class="overlay">
-        <div class="menu-content paper">
-            <h2>Créditos</h2>
-            <p>Creado por: Tu Nombre/Estudio</p>
-            <p>Diseño Visual: Gaucho-Punk Style v1</p>
-            <p>Música: "Milonga de Neón" (IA Generated)</p>
-            <button onclick="toggleOverlay('credits-overlay')" class="btn-close">Cerrar</button>
-        </div>
-    </div>
-
-    <div id="game-ui">
-        <div class="mesa-textura"></div>
-        
-        <div class="top-bar">
-            <div class="stat tallado">🏆 <span id="score">0</span></div>
-            <button id="music-toggle" onclick="toggleMusic()">🔇</button>
-            <div class="stat tallado">🎴 <span id="deck-count">40</span></div>
+            <div id="discard-pile" class="card-slot"></div>
         </div>
 
-        <div class="play-area">
-            <div id="deck" class="card-slot deck-stack" onclick="drawCard()">
-                <div class="card-back taller"></div>
-            </div>
-            <div id="discard-pile" class="card-slot">
-                </div>
-        </div>
+        <div id="announcement"></div>
 
-        <div id="feedback-matrix">¡QUIERO VALE CUATRO!</div>
-
-        <div class="hand-container">
+        <div class="hand-area">
             <div id="player-hand" class="hand"></div>
         </div>
     </div>
-
-    <audio id="bg-music" loop>
-        <source src="assets/music_fondo.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="snd-card" preload="auto">
-        <source src="assets/card_slide.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="snd-special" preload="auto">
-        <source src="assets/special_ancho.mp3" type="audio/mpeg">
-    </audio>
 
     <script src="script.js"></script>
 </body>
