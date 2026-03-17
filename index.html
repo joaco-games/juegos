@@ -5,21 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>TRUCO-UNO: Stack & Win</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icono.jpg">
+    <link rel="apple-touch-icon" href="icono.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        :root {
+            --gold: #ffd700;
+            --green-bg: radial-gradient(circle, #1b5e20, #0a3d1d);
+            --red-uno: #d32f2f;
+        }
+
+        body {
+            margin: 0; padding: 0; background: #000;
+            font-family: 'Arial Rounded MT Bold', 'Helvetica', sans-serif;
+            color: white; overflow: hidden; touch-action: manipulation;
+        }
+
+        .overlay {
+            position: fixed; inset: 0; background: var(--green-bg);
+            z-index: 1000; display: flex; justify-content: center; align-items: center;
+            transition: 0.5s ease;
+        }
+        .overlay:not(.active) { transform: translateY(-100%); visibility: hidden; }
+
+        .menu-content { text-align: center; width: 85%; }
+        .menu-icon { 
+            width: 130px; height: 130px; border-radius: 30px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            border: 3px solid var(--gold); margin-bottom: 20px;
+            object-fit: cover;
+        }
+
+        .logo { font-size: 2.5rem; text-shadow: 2px 2px 0 #000; margin: 0 0 30px; }
+        .uno-color { color: var(--red-uno); }
+
+        .btn-play {
+            background: linear-gradient(to bottom, #ffeb3b, #fbc02d);
+            border: none; padding: 18px 50px; font-size: 1.5rem; font-weight: bold;
+            border-radius: 50px; color: #3e2723; box-shadow: 0 6px 0 #bda06d;
+            cursor: pointer;
+        }
+
+        #game-container { height: 100vh; background: var(--green-bg); display: flex; flex-direction: column; }
+        .header { display: flex; justify-content: space-between; padding: 50px 20px 10px; }
+        .score-badge, .deck-badge { background: rgba(0,0,0,0.4); padding: 8px 15px; border-radius: 20px; border: 1px solid var(--gold); }
+
+        .table { flex: 1; display: flex; justify-content: center; align-items: center; gap: 20px; }
+        .card-slot { width: 90px; height: 135px; border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; position: relative; }
+
+        .card-obj {
+            width: 90px; height: 135px; background: white; border-radius: 10px;
+            color: black; display: flex; flex-direction: column; justify-content: space-between;
+            padding: 10px; box-sizing: border-box; box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            position: relative;
+        }
+
+        .hand { display: flex; justify-content: center; padding: 40px 15px; height: 140px; }
+        .hand .card-obj { margin-left: -45px; cursor: pointer; }
+
+        #announcement {
+            position: fixed; top: 40%; width: 100%; text-align: center;
+            font-size: 2rem; color: var(--gold); text-shadow: 0 0 10px #000;
+            pointer-events: none; opacity: 0; z-index: 200;
+        }
+        .show-msg { animation: msgPop 1.2s forwards; }
+        @keyframes msgPop {
+            0% { opacity: 0; transform: scale(0.5); }
+            20% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0; transform: translateY(-50px); }
+        }
+    </style>
 </head>
 <body>
 
     <div id="start-screen" class="overlay active">
         <div class="menu-content">
-            <img src="icono.jpg" alt="Icono" class="menu-icon">
+            <img src="icono.png" alt="Icono" class="menu-icon">
             <h1 class="logo">STACK <span class="uno-color">& WIN</span></h1>
             <button onclick="startGame()" class="btn-play">¡REPARTIR!</button>
-            <div class="menu-footer">
-                <button onclick="alert('Reglas: Coincide palo o número. Los 1 valen doble. El 1 de espada limpia la mesa.')">REGLAS</button>
-            </div>
         </div>
     </div>
 
@@ -28,16 +92,13 @@
             <div class="score-badge">🏆 <span id="score">0</span></div>
             <div class="deck-badge">🎴 <span id="deck-count">40</span></div>
         </div>
-
         <div class="table">
-            <div id="deck" class="card deck" onclick="drawCard()">
-                <div class="card-inner back"></div>
+            <div id="deck" class="card-slot" style="background:rgba(0,0,0,0.2); cursor:pointer;" onclick="drawCard()">
+                <div style="text-align:center; margin-top:50px;">MAZO</div>
             </div>
             <div id="discard-pile" class="card-slot"></div>
         </div>
-
         <div id="announcement"></div>
-
         <div class="hand-area">
             <div id="player-hand" class="hand"></div>
         </div>
