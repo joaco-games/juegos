@@ -329,12 +329,14 @@
         function updateLobby() {
             document.getElementById('player-count').innerText = connections.length + 1;
         }
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
-            });
-        }
-    </script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('¡App lista para usar offline!', reg))
+                .catch(err => console.log('Error al registrar el sw', err));
+        });
+    }
+</script>
 </body>
 </html>
