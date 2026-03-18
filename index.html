@@ -3,114 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TRUCO-STACK PRO</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <title>TRUCO-STACK ULTIMATE</title>
     <style>
         :root { --gold: #ffd700; --green: radial-gradient(circle, #1b5e20, #0a3d1d); }
-        
-        body { 
-            margin: 0; background: #000; 
-            font-family: 'Arial Black', sans-serif; 
-            color: white; overflow: hidden; touch-action: none; 
-        }
+        body { margin: 0; background: #000; font-family: 'Arial Black', sans-serif; color: white; overflow: hidden; touch-action: none; }
 
-        /* --- CINEMÁTICA NÍTIDA --- */
-        #intro-cinematic {
-            position: fixed; inset: 0; background: #000; z-index: 9999;
-            display: flex; justify-content: center; align-items: center; overflow: hidden;
-        }
-        .fn-text {
-            font-family: 'Impact', sans-serif; font-size: 5.5rem; color: #fff; text-transform: uppercase;
-            font-style: italic; text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000, 0 0 20px rgba(255,215,0,0.5);
-            opacity: 0; animation: fortniteIn 3.2s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
-        }
-        @keyframes fortniteIn {
-            0% { transform: scale(2.2); opacity: 0; }
-            15% { transform: scale(1); opacity: 1; }
-            85% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(0.8); opacity: 0; }
-        }
+        /* CINEMÁTICA NÍTIDA */
+        #intro-cinematic { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .fn-text { font-family: 'Impact', sans-serif; font-size: 5.5rem; color: #fff; font-style: italic; text-shadow: -3px -3px 0 #000, 3px 3px 0 #000, 0 0 20px rgba(255,215,0,0.5); animation: fortniteIn 3s ease forwards; opacity: 0; }
+        @keyframes fortniteIn { 0% { transform: scale(2); opacity: 0; } 15% { transform: scale(1); opacity: 1; } 85% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.8); opacity: 0; } }
 
-        /* --- INTERFAZ --- */
+        /* INTERFAZ */
         .overlay { position: fixed; inset: 0; background: var(--green); z-index: 1000; display: flex; justify-content: center; align-items: center; text-align: center; }
         .overlay:not(.active) { display: none; }
         .menu-card { background: rgba(0,0,0,0.85); padding: 25px; border-radius: 30px; border: 3px solid var(--gold); width: 85%; max-width: 400px; backdrop-filter: blur(15px); }
         
-        .btn { 
-            background: linear-gradient(to bottom, #ffeb3b, #fbc02d); border: none; 
-            padding: 15px; font-size: 1.1rem; font-weight: bold; border-radius: 50px; 
-            color: #3e2723; cursor: pointer; width: 100%; margin: 8px 0; 
-            box-shadow: 0 4px 0 #bda06d; touch-action: manipulation;
-        }
-        .btn-rules { background: #607d8b; color: white; box-shadow: 0 4px 0 #37474f; font-size: 0.9rem; }
+        .btn { background: linear-gradient(to bottom, #ffeb3b, #fbc02d); border: none; padding: 15px; font-size: 1.1rem; font-weight: bold; border-radius: 50px; color: #3e2723; cursor: pointer; width: 100%; margin: 8px 0; box-shadow: 0 4px 0 #bda06d; }
+        .btn-rules { background: #607d8b; color: white; box-shadow: 0 4px 0 #37474f; }
 
         #game-ui { height: 100vh; display: none; flex-direction: column; background: var(--green); }
-        .header { display: flex; justify-content: space-between; padding: 45px 15px 10px; }
-        .score-box { background: rgba(0,0,0,0.7); padding: 5px 15px; border-radius: 15px; border: 1px solid var(--gold); font-size: 0.9rem; }
+        .header { display: flex; justify-content: space-between; padding: 50px 15px 10px; }
+        .score-box { background: rgba(0,0,0,0.7); padding: 5px 12px; border-radius: 12px; border: 1px solid var(--gold); font-size: 0.85rem; }
 
-        /* MANO ADAPTATIVA (Fix para el usuario 024) */
-        .hand-area { height: 160px; width: 100%; position: relative; margin-bottom: 20px; overflow: hidden; }
+        /* TABLERO Y MANO */
+        .table { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .hand-area { height: 160px; width: 100%; position: relative; margin-bottom: 20px; }
         .hand { display: flex; justify-content: center; width: 100%; height: 100%; position: relative; }
 
         .card-obj { 
             width: 80px; height: 115px; background: white; border-radius: 10px; color: black; 
             display: flex; flex-direction: column; justify-content: space-between; padding: 8px; 
             box-sizing: border-box; box-shadow: 0 5px 15px rgba(0,0,0,0.4); 
-            position: absolute; transition: transform 0.3s, left 0.3s;
+            position: absolute; transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
             border: 1px solid #ccc;
         }
 
-        /* MODAL DE REGLAS (Pedido por casi todos) */
-        #rules-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000;
-            display: none; flex-direction: column; padding: 30px; overflow-y: auto;
-        }
+        /* NOTIFICACIONES */
+        #msg-pop { position: fixed; top: 30%; width: 100%; text-align: center; font-size: 2.5rem; color: var(--gold); text-shadow: 2px 2px 0 #000; pointer-events: none; opacity: 0; z-index: 2000; }
+        .anim-msg { animation: popMsg 1.2s forwards; }
+        @keyframes popMsg { 0% { opacity:0; transform: scale(0.5); } 30% { opacity:1; transform: scale(1.2); } 100% { opacity:0; transform: translateY(-50px); } }
+
+        #rules-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; flex-direction: column; padding: 40px 20px; overflow-y: auto; text-align: left; }
         #rules-modal.active { display: flex; }
     </style>
 </head>
 <body>
 
     <div id="intro-cinematic"><div class="fn-text">TRUCO STACK</div></div>
+    <div id="msg-pop"></div>
 
     <div id="lobby" class="overlay active">
         <div class="menu-card">
-            <h1 style="color:var(--gold); font-style:italic; margin:0 0 15px 0;">TRUCO STACK</h1>
-            <button class="btn" onpointerdown="startSoloGame()">SOLITARIO (VS IA)</button>
-            <button class="btn" onpointerdown="startAsHost()">CREAR MESA ONLINE</button>
-            <input type="text" id="join-id" placeholder="ID de la Mesa" style="width:80%; padding:10px; border-radius:10px; border:none; margin:10px 0; text-align:center;">
-            <button class="btn" onpointerdown="joinRoom()">UNIRSE</button>
-            <button class="btn btn-rules" onpointerdown="toggleRules(true)">¿CÓMO JUGAR?</button>
-            <div id="waiting-area" style="display:none; margin-top:10px;">
-                <p>ID: <b id="my-id" style="color:var(--gold);">...</b></p>
-                <button class="btn" id="start-btn" style="display:none;" onpointerdown="broadcastStart()">¡REPARTIR!</button>
-            </div>
+            <h1 style="color:var(--gold); margin:0 0 15px 0;">TRUCO STACK</h1>
+            <button class="btn" onpointerdown="startGame('solo')">JUGAR SOLITARIO</button>
+            <button class="btn btn-rules" onpointerdown="toggleRules(true)">REGLAS DE PODER</button>
         </div>
     </div>
 
     <div id="rules-modal">
-        <h2 style="color:var(--gold)">REGLAS DEL JUEGO</h2>
-        <p>1. Se juega como el <b>UNO</b>: Tirás carta del mismo palo o mismo número.</p>
-        <p>2. Si no tenés para tirar, tocá el <b>MAZO</b> para robar una.</p>
-        <p>3. El primero en quedarse sin cartas gana la ronda y suma 1 punto.</p>
-        <p>4. <b>Mesa Online:</b> Pasale el ID a un amigo para jugar en tiempo real.</p>
-        <button class="btn" onpointerdown="toggleRules(false)">ENTENDIDO</button>
+        <h2 style="color:var(--gold)">PODERES DE LAS CARTAS</h2>
+        <ul style="line-height: 1.6;">
+            <li><b>7 de Oro/Espada:</b> El rival roba +2 cartas.</li>
+            <li><b>Los 12 (Reyes):</b> Salta el turno del rival.</li>
+            <li><b>Los 10 (Sotas):</b> Te da otro turno extra.</li>
+            <li><b>Mazo:</b> Si no tenés qué tirar, tocá el mazo para robar.</li>
+        </ul>
+        <button class="btn" onpointerdown="toggleRules(false)">¡LISTO!</button>
     </div>
 
     <div id="game-ui">
         <div class="header">
-            <div class="score-box">TÚ: <span id="p1-score">0</span> | RIVAL: <span id="p2-score">0</span></div>
+            <div class="score-box">TÚ: <span id="s1">0</span> | IA: <span id="s2">0</span></div>
             <div class="score-box"><b id="turn-label">Tu Turno</b></div>
         </div>
         <div class="table">
-            <div id="floating-msg"></div>
-            <div style="display:flex; gap:20px; justify-content:center; align-items:center; height: 300px;">
-                <div class="card-slot" style="background:rgba(255,255,255,0.1); border: 2px dashed #fff; width:80px; height:115px; border-radius:10px; display:flex; align-items:center; justify-content:center;" onpointerdown="requestCard()">MAZO</div>
+            <div style="display:flex; gap:25px; align-items:center;">
+                <div class="card-obj" style="position:static; background:#333; color:white; border:2px dashed #666; cursor:pointer;" onpointerdown="requestCard()">MAZO</div>
                 <div id="discard-pile"></div>
             </div>
         </div>
@@ -120,132 +88,135 @@
     </div>
 
     <script>
-        // LÓGICA DE CINEMÁTICA
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const intro = document.getElementById('intro-cinematic');
-                intro.style.transition = "opacity 0.8s";
-                intro.style.opacity = "0";
-                setTimeout(() => intro.remove(), 800);
-            }, 3200);
-        });
+        // CINEMÁTICA
+        setTimeout(() => document.getElementById('intro-cinematic').remove(), 3200);
 
-        function toggleRules(show) { document.getElementById('rules-modal').classList.toggle('active', show); }
-
-        let peer, conn, connections = [];
-        let isHost = false, isSolo = false;
-        let myIdInGame = 0;
-        let score = [0, 0, 0, 0];
-        let gameState = { deck: [], discard: null, hands: [[],[],[],[]], turn: 0 };
-
+        let score = [0, 0];
+        let gameState = { deck: [], discard: null, hands: [[], []], turn: 0 };
         const suits = [{n:'Espadas',s:'⚔️',c:'#1976d2'},{n:'Bastos',s:'🪵',c:'#388e3c'},{n:'Oros',s:'🟡',c:'#fbc02d'},{n:'Copas',s:'🏆',c:'#d32f2f'}];
         const values = [1,2,3,4,5,6,7,10,11,12];
 
-        function startSoloGame() {
-            isSolo = true;
-            resetMatch();
+        function toggleRules(s) { document.getElementById('rules-modal').classList.toggle('active', s); }
+
+        function startGame(mode) {
             document.getElementById('lobby').classList.remove('active');
             document.getElementById('game-ui').style.display = 'flex';
-            render();
+            resetRound();
         }
 
-        function resetMatch() {
+        function resetRound() {
             gameState.deck = [];
             suits.forEach(s => values.forEach(v => gameState.deck.push({suit:s, value:v})));
             gameState.deck.sort(() => Math.random() - 0.5);
-            for(let i=0; i<2; i++) {
-                gameState.hands[i] = [];
-                for(let j=0; j<3; j++) gameState.hands[i].push(gameState.deck.pop());
+            gameState.hands = [[], []];
+            for(let j=0; j<4; j++) { // Empezamos con 4 cartas para más reto
+                gameState.hands[0].push(gameState.deck.pop());
+                gameState.hands[1].push(gameState.deck.pop());
             }
             gameState.discard = gameState.deck.pop();
             gameState.turn = 0;
+            render();
         }
 
-        function render() {
-            // Actualizar puntos
-            document.getElementById('p1-score').innerText = score[0];
-            document.getElementById('p2-score').innerText = score[1];
-            
-            // Render mazo de descarte
-            const discardDiv = document.getElementById('discard-pile');
-            discardDiv.innerHTML = createCardHTML(gameState.discard);
-
-            // Render mano con corrección de amontonamiento (Fix usuario 024)
-            const handDiv = document.getElementById('player-hand');
-            handDiv.innerHTML = '';
-            const myHand = gameState.hands[myIdInGame];
-            
-            // Calculamos separación dinámica
-            const containerWidth = window.innerWidth * 0.9;
-            const cardWidth = 80;
-            let overlap = 65; 
-            if (myHand.length * overlap > containerWidth) {
-                overlap = containerWidth / myHand.length;
-            }
-
-            myHand.forEach((card, i) => {
-                const cardEl = document.createElement('div');
-                cardEl.className = 'card-obj';
-                cardEl.innerHTML = `<b>${card.value}</b><div style="font-size:1.8rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b>`;
-                cardEl.style.color = card.suit.c;
-                cardEl.style.left = `calc(50% - ${cardWidth/2}px + ${(i - (myHand.length-1)/2) * overlap}px)`;
-                cardEl.style.zIndex = i;
-                cardEl.onpointerdown = (e) => { e.preventDefault(); playCard(i); };
-                handDiv.appendChild(cardEl);
-            });
-
-            document.getElementById('turn-label').innerText = gameState.turn === myIdInGame ? "TU TURNO" : "ESPERANDO...";
-            if(isSolo && gameState.turn === 1) setTimeout(iaMove, 1000);
+        function notify(txt) {
+            const m = document.getElementById('msg-pop');
+            m.innerText = txt; m.classList.remove('anim-msg');
+            void m.offsetWidth; m.classList.add('anim-msg');
         }
 
         function playCard(i) {
-            if(gameState.turn !== myIdInGame) return;
-            const card = gameState.hands[myIdInGame][i];
+            if(gameState.turn !== 0) return;
+            const card = gameState.hands[0][i];
+            
             if(card.suit.n === gameState.discard.suit.n || card.value === gameState.discard.value) {
+                applyPower(card, 1); // El poder afecta al rival (index 1)
                 gameState.discard = card;
-                gameState.hands[myIdInGame].splice(i, 1);
+                gameState.hands[0].splice(i, 1);
                 
-                if(gameState.hands[myIdInGame].length === 0) {
-                    alert("¡Ganaste la ronda!");
-                    score[myIdInGame]++;
-                    resetMatch();
+                if(gameState.hands[0].length === 0) {
+                    score[0]++; notify("¡RONDA GANADA!");
+                    setTimeout(resetRound, 1500);
                 } else {
-                    gameState.turn = isSolo ? 1 : (gameState.turn + 1) % 4;
+                    // Si el poder fue una Sota (10), no cambiamos el turno
+                    if(card.value !== 10) gameState.turn = 1;
+                    else notify("¡TURNO EXTRA!");
                 }
                 render();
             }
         }
 
+        function applyPower(card, targetIdx) {
+            if((card.value === 7 && (card.suit.n === 'Oros' || card.suit.n === 'Espadas'))) {
+                for(let i=0; i<2; i++) if(gameState.deck.length) gameState.hands[targetIdx].push(gameState.deck.pop());
+                notify("+2 PARA RIVAL");
+            }
+            if(card.value === 12) {
+                notify("SALTO DE TURNO");
+                // En solitario, saltar turno es simplemente quedarte vos
+                gameState.turn = (targetIdx === 1) ? 0 : 1; 
+            }
+        }
+
         function requestCard() {
-            if(gameState.turn !== myIdInGame) return;
-            if(gameState.deck.length > 0) {
-                gameState.hands[myIdInGame].push(gameState.deck.pop());
-                gameState.turn = isSolo ? 1 : (gameState.turn + 1) % 4;
+            if(gameState.turn !== 0) return;
+            if(gameState.deck.length) {
+                gameState.hands[0].push(gameState.deck.pop());
+                gameState.turn = 1;
                 render();
-            } else {
-                alert("¡No hay más cartas!");
             }
         }
 
         function iaMove() {
             let hand = gameState.hands[1];
-            let playIdx = hand.findIndex(c => c.suit.n === gameState.discard.suit.n || c.value === gameState.discard.value);
+            let idx = hand.findIndex(c => c.suit.n === gameState.discard.suit.n || c.value === gameState.discard.value);
             
-            if(playIdx !== -1) {
-                gameState.discard = hand.splice(playIdx, 1)[0];
-                if(hand.length === 0) { alert("¡Ganó la IA!"); score[1]++; resetMatch(); }
+            if(idx !== -1) {
+                const card = hand[idx];
+                applyPower(card, 0); // La IA nos tira el poder a nosotros
+                gameState.discard = hand.splice(idx, 1)[0];
+                if(hand.length === 0) {
+                    score[1]++; notify("IA GANA RONDA");
+                    setTimeout(resetRound, 1500);
+                } else {
+                    if(card.value !== 10) gameState.turn = 0;
+                }
             } else {
-                if(gameState.deck.length > 0) hand.push(gameState.deck.pop());
+                if(gameState.deck.length) hand.push(gameState.deck.pop());
+                gameState.turn = 0;
             }
-            gameState.turn = 0;
             render();
         }
 
-        function createCardHTML(card) {
-            return `<div class="card-obj" style="position:relative; color:${card.suit.c}"><b>${card.value}</b><div style="font-size:1.8rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b></div>`;
+        function render() {
+            document.getElementById('s1').innerText = score[0];
+            document.getElementById('s2').innerText = score[1];
+            document.getElementById('discard-pile').innerHTML = createCardHTML(gameState.discard);
+            
+            const handDiv = document.getElementById('player-hand');
+            handDiv.innerHTML = '';
+            const myHand = gameState.hands[0];
+            
+            // Fix amontonamiento de cartas (Usuario 024)
+            const overlap = Math.min(65, (window.innerWidth * 0.85) / myHand.length);
+
+            myHand.forEach((card, i) => {
+                const c = document.createElement('div');
+                c.className = 'card-obj';
+                c.style.color = card.suit.c;
+                c.style.left = `calc(50% - 40px + ${(i - (myHand.length-1)/2) * overlap}px)`;
+                c.style.zIndex = i;
+                c.innerHTML = `<b>${card.value}</b><div style="font-size:1.8rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b>`;
+                c.onpointerdown = (e) => { e.preventDefault(); playCard(i); };
+                handDiv.appendChild(c);
+            });
+
+            document.getElementById('turn-label').innerText = gameState.turn === 0 ? "TU TURNO" : "IA PENSANDO...";
+            if(gameState.turn === 1) setTimeout(iaMove, 1200);
         }
-        
-        // El resto de funciones PeerJS (startAsHost, joinRoom) se mantienen igual que tu lógica original
+
+        function createCardHTML(card) {
+            return `<div class="card-obj" style="position:static; color:${card.suit.c}"><b>${card.value}</b><div style="font-size:1.8rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b></div>`;
+        }
     </script>
 </body>
 </html>
