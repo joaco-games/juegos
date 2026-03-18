@@ -20,36 +20,47 @@
             color: white; overflow: hidden; touch-action: none; 
         }
 
-        /* --- CINEMÁTICA ESTILO FORTNITE --- */
+        /* --- CINEMÁTICA ESTILO FORTNITE NÍTIDA --- */
         #intro-cinematic {
             position: fixed; inset: 0; background: #000; z-index: 9999;
             display: flex; justify-content: center; align-items: center; overflow: hidden;
+            perspective: 1000px;
         }
 
         .fn-text {
-            font-size: 5rem; color: #fff; text-transform: uppercase;
-            font-style: italic; letter-spacing: -2px;
-            text-shadow: 0 0 20px rgba(255,215,0,0.8), 5px 5px 0 #000;
-            transform: scale(5); opacity: 0;
-            animation: fortniteIn 3s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
+            /* Fuente impactante y nítida */
+            font-family: 'Impact', 'Arial Black', sans-serif; 
+            font-size: 5.5rem; color: #fff; text-transform: uppercase;
+            font-style: italic; letter-spacing: -1px;
+            
+            /* Borde definido para evitar que se vea borroso */
+            text-shadow: 
+                -3px -3px 0 #000,  3px -3px 0 #000,
+                -3px  3px 0 #000,  3px  3px 0 #000,
+                 0px  0px 20px rgba(255,215,0,0.5);
+            
+            opacity: 0;
+            will-change: transform, opacity;
+            /* Animación corregida: de scale 2.2 a 1 (sin blur) */
+            animation: fortniteInNitido 3.2s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
         }
 
         #intro-cinematic::after {
             content: ''; position: absolute; inset: 0;
-            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-            transform: scale(0); animation: flash 0.6s 0.2s ease-out forwards;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            transform: scale(0); animation: flash 0.6s 0.1s ease-out forwards;
         }
 
-        @keyframes fortniteIn {
-            0% { transform: scale(6); opacity: 0; filter: blur(20px); }
-            15% { transform: scale(1); opacity: 1; filter: blur(0); }
-            80% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(0.5); opacity: 0; filter: blur(15px); }
+        @keyframes fortniteInNitido {
+            0% { transform: scale(2.2) translateZ(200px); opacity: 0; }
+            10% { transform: scale(1) translateZ(0); opacity: 1; }
+            85% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.8) translateZ(-100px); opacity: 0; }
         }
 
         @keyframes flash {
             0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(2); opacity: 1; }
+            50% { transform: scale(2.5); opacity: 1; }
             100% { transform: scale(4); opacity: 0; }
         }
 
@@ -161,7 +172,7 @@
     </div>
 
     <script>
-        // MANEJO DE CINEMÁTICA (ARREGLADO)
+        // MANEJO DE CINEMÁTICA (ARREGLADO PARA NO TRABARSE)
         window.addEventListener('load', () => {
             const intro = document.getElementById('intro-cinematic');
             setTimeout(() => {
