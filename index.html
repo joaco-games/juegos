@@ -13,95 +13,124 @@
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
         :root { --gold: #ffd700; --green: radial-gradient(circle, #1b5e20, #0a3d1d); }
-        body { margin: 0; background: #000; font-family: 'Arial Rounded MT Bold', sans-serif; color: white; overflow: hidden; touch-action: none; }
         
-        /* --- CINEMÁTICA DE ENTRADA --- */
-        #intro-cinematic {
-            position: fixed; inset: 0; background: black; z-index: 9999;
-            display: flex; justify-content: center; align-items: center; flex-direction: column;
+        body { 
+            margin: 0; background: #000; 
+            font-family: 'Arial Black', 'Arial Rounded MT Bold', sans-serif; 
+            color: white; overflow: hidden; touch-action: none; 
         }
-        .intro-text {
-            font-size: 2.5rem; color: var(--gold); font-weight: bold;
-            opacity: 0; transform: scale(0.5);
-            animation: introSequence 4s forwards;
-        }
-        .intro-sub {
-            font-size: 1.2rem; color: white; margin-top: 10px;
-            opacity: 0; animation: fadeIn 1s 2.5s forwards;
-        }
-        @keyframes introSequence {
-            0% { opacity: 0; transform: scale(0.5); filter: blur(10px); }
-            30% { opacity: 1; transform: scale(1.1); filter: blur(0); }
-            70% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(1.5); filter: blur(20px); }
-        }
-        @keyframes fadeIn { to { opacity: 1; } }
 
+        /* --- CINEMÁTICA ESTILO FORTNITE --- */
+        #intro-cinematic {
+            position: fixed; inset: 0; background: #000; z-index: 9999;
+            display: flex; justify-content: center; align-items: center; overflow: hidden;
+        }
+
+        .fn-text {
+            font-size: 5rem; color: #fff; text-transform: uppercase;
+            font-style: italic; letter-spacing: -2px;
+            text-shadow: 0 0 20px rgba(255,215,0,0.8), 5px 5px 0 #000;
+            transform: scale(5); opacity: 0;
+            animation: fortniteIn 3s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
+        }
+
+        #intro-cinematic::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            transform: scale(0); animation: flash 0.6s 0.2s ease-out forwards;
+        }
+
+        @keyframes fortniteIn {
+            0% { transform: scale(6); opacity: 0; filter: blur(20px); }
+            15% { transform: scale(1); opacity: 1; filter: blur(0); }
+            80% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.5); opacity: 0; filter: blur(15px); }
+        }
+
+        @keyframes flash {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(2); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+
+        /* --- INTERFAZ DEL JUEGO --- */
         .overlay { position: fixed; inset: 0; background: var(--green); z-index: 1000; display: flex; justify-content: center; align-items: center; text-align: center; }
         .overlay:not(.active) { display: none; }
-        .menu-card { background: rgba(0,0,0,0.7); padding: 25px; border-radius: 30px; border: 2px solid var(--gold); width: 85%; max-width: 400px; backdrop-filter: blur(10px); }
         
-        /* MEJORA DE BOTONES PARA TOUCH */
-        .btn { background: linear-gradient(to bottom, #ffeb3b, #fbc02d); border: none; padding: 15px; font-size: 1.1rem; font-weight: bold; border-radius: 50px; color: #3e2723; cursor: pointer; width: 100%; margin: 8px 0; box-shadow: 0 4px 0 #bda06d; touch-action: manipulation; }
-        .btn-blue { background: linear-gradient(to bottom, #4fc3f7, #0288d1); color: white; box-shadow: 0 4px 0 #01579b; }
+        .menu-card { background: rgba(0,0,0,0.8); padding: 30px; border-radius: 30px; border: 3px solid var(--gold); width: 85%; max-width: 400px; backdrop-filter: blur(15px); box-shadow: 0 0 30px rgba(0,0,0,0.5); }
         
+        .btn { 
+            background: linear-gradient(to bottom, #ffeb3b, #fbc02d); border: none; 
+            padding: 18px; font-size: 1.2rem; font-weight: bold; border-radius: 50px; 
+            color: #3e2723; cursor: pointer; width: 100%; margin: 10px 0; 
+            box-shadow: 0 5px 0 #bda06d; transition: 0.1s; touch-action: manipulation;
+        }
+        .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #bda06d; }
+        .btn-blue { background: linear-gradient(to bottom, #4fc3f7, #0288d1); color: white; box-shadow: 0 5px 0 #01579b; }
+
         #game-ui { height: 100vh; display: none; flex-direction: column; background: var(--green); }
-        .header { display: flex; justify-content: space-between; padding: 45px 20px 10px; }
-        .status-bar { background: rgba(0,0,0,0.5); padding: 5px 12px; border-radius: 15px; border: 1px solid var(--gold); font-size: 0.75rem; }
+        .header { display: flex; justify-content: space-between; padding: 50px 20px 10px; }
+        .status-bar { background: rgba(0,0,0,0.6); padding: 8px 15px; border-radius: 20px; border: 1px solid var(--gold); font-size: 0.8rem; }
         
-        .table { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
-        .card-slot { width: 80px; height: 120px; border: 2px dashed rgba(255,255,255,0.3); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; touch-action: manipulation; }
+        .table { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 25px; }
+        .card-slot { 
+            width: 85px; height: 125px; border: 2px dashed rgba(255,255,255,0.4); 
+            border-radius: 12px; display: flex; align-items: center; justify-content: center; 
+            font-size: 0.7rem; touch-action: manipulation;
+        }
         
-        /* MEJORA DE CARTA PARA TOUCH */
         .card-obj { 
-            width: 80px; height: 120px; background: white; border-radius: 10px; color: black; 
-            display: flex; flex-direction: column; justify-content: space-between; padding: 8px; 
-            box-sizing: border-box; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: absolute; 
-            transition: 0.2s; touch-action: manipulation; pointer-events: auto;
+            width: 85px; height: 125px; background: white; border-radius: 12px; color: black; 
+            display: flex; flex-direction: column; justify-content: space-between; padding: 10px; 
+            box-sizing: border-box; box-shadow: 0 8px 20px rgba(0,0,0,0.6); position: absolute; 
+            transition: 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28); pointer-events: auto;
         }
 
-        .chat-pills { display: flex; justify-content: center; gap: 8px; padding: 10px; }
-        .pill { background: white; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; border: 2px solid var(--gold); touch-action: manipulation; }
+        .chat-pills { display: flex; justify-content: center; gap: 12px; padding: 15px; }
+        .pill { 
+            background: white; border-radius: 50%; width: 45px; height: 45px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 1.6rem; border: 2px solid var(--gold); box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+        }
 
-        .hand-area { height: 150px; width: 100%; position: relative; margin-bottom: 20px; }
+        .hand-area { height: 160px; width: 100%; position: relative; margin-bottom: 25px; }
         .hand { display: flex; justify-content: center; height: 100%; }
         
-        #floating-msg { position: fixed; top: 35%; width: 100%; text-align: center; font-size: 3.5rem; pointer-events: none; z-index: 2000; opacity: 0; }
+        #floating-msg { position: fixed; top: 35%; width: 100%; text-align: center; font-size: 4rem; pointer-events: none; z-index: 2000; opacity: 0; }
         .show-float { animation: floatUp 1.5s forwards; }
-        @keyframes floatUp { 0% { opacity:0; transform:scale(0.5); } 20% { opacity:1; transform:scale(1.2); } 100% { opacity:0; transform:translateY(-100px); } }
+        @keyframes floatUp { 0% { opacity:0; transform:scale(0.5); } 20% { opacity:1; transform:scale(1.3); } 100% { opacity:0; transform:translateY(-120px); } }
 
         #win-overlay { background: rgba(0,0,0,0.95); z-index: 5000; display: none; flex-direction: column; justify-content: center; align-items: center; }
-        .win-banner { color: var(--gold); font-size: 3rem; text-shadow: 0 0 20px var(--gold); animation: pulse 1s infinite; }
-        @keyframes pulse { 0% {transform:scale(1);} 50% {transform:scale(1.1);} 100% {transform:scale(1);} }
+        .win-banner { color: var(--gold); font-size: 3.5rem; text-shadow: 0 0 25px var(--gold); animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% {transform:scale(1);} 50% {transform:scale(1.1);} }
     </style>
 </head>
 <body>
 
     <div id="intro-cinematic">
-        <div class="intro-text">JOACO GAMES</div>
-        <div class="intro-sub">Presenta...</div>
+        <div class="fn-text">TRUCO STACK</div>
     </div>
 
     <div id="lobby" class="overlay active">
         <div class="menu-card">
-            <h2 style="color:var(--gold)">TRUCO-STACK</h2>
+            <h1 style="color:var(--gold); margin-bottom:20px; font-style:italic;">TRUCO STACK</h1>
             <button class="btn btn-blue" onpointerdown="startSoloGame()">SOLITARIO (VS IA)</button>
             <button class="btn" onpointerdown="startAsHost()">CREAR MESA ONLINE</button>
-            <input type="text" id="join-id" placeholder="ID de la Mesa" style="width: 80%; padding: 10px; border-radius: 10px; margin-bottom: 10px;">
+            <input type="text" id="join-id" placeholder="ID de la Mesa" style="width:85%; padding:12px; border-radius:10px; border:none; margin:10px 0; text-align:center; font-weight:bold;">
             <button class="btn" onpointerdown="joinRoom()">UNIRSE A MESA</button>
             
-            <div id="waiting-area" style="display:none; margin-top:15px;">
-                <p>ID: <b id="my-id" style="color:var(--gold)">...</b></p>
-                <p>Jugadores: <span id="player-count">1</span>/4</p>
-                <button class="btn" id="start-btn" style="display:none;" onpointerdown="broadcastStart()">¡REPARTIR!</button>
+            <div id="waiting-area" style="display:none; margin-top:20px;">
+                <p>ID DE MESA: <b id="my-id" style="color:var(--gold); font-size:1.2rem;">...</b></p>
+                <p>JUGADORES: <span id="player-count">1</span>/4</p>
+                <button class="btn" id="start-btn" style="display:none;" onpointerdown="broadcastStart()">¡REPARTIR CARTAS!</button>
             </div>
         </div>
     </div>
 
     <div id="win-overlay" class="overlay">
         <div class="win-banner">¡VICTORIA!</div>
-        <p id="winner-name" style="font-size:1.5rem;"></p>
-        <button class="btn" onpointerdown="location.reload()" style="width:220px;">JUGAR OTRA VEZ</button>
+        <p id="winner-name" style="font-size:1.8rem; margin:20px 0;"></p>
+        <button class="btn" onpointerdown="location.reload()" style="width:250px;">VOLVER AL MENÚ</button>
     </div>
 
     <div id="game-ui">
@@ -112,7 +141,7 @@
         
         <div class="table">
             <div id="floating-msg"></div>
-            <div style="display:flex; gap:15px;">
+            <div style="display:flex; gap:20px;">
                 <div class="card-slot" onpointerdown="requestCard()">MAZO</div>
                 <div id="discard-pile" class="card-slot"></div>
             </div>
@@ -132,13 +161,16 @@
     </div>
 
     <script>
-        // --- MANEJO DE CINEMÁTICA ---
-        setTimeout(() => {
+        // MANEJO DE CINEMÁTICA (ARREGLADO)
+        window.addEventListener('load', () => {
             const intro = document.getElementById('intro-cinematic');
-            intro.style.transition = "opacity 1s";
-            intro.style.opacity = "0";
-            setTimeout(() => intro.remove(), 1000);
-        }, 4000);
+            setTimeout(() => {
+                intro.style.transition = "opacity 0.8s ease";
+                intro.style.opacity = "0";
+                intro.style.pointerEvents = "none";
+                setTimeout(() => intro.remove(), 800);
+            }, 3200);
+        });
 
         let peer, conn, connections = [];
         let isHost = false, isSolo = false, gameFinished = false;
@@ -148,7 +180,6 @@
         const suits = [{n:'Espadas',s:'⚔️',c:'#1976d2'},{n:'Bastos',s:'🪵',c:'#388e3c'},{n:'Oros',s:'🟡',c:'#fbc02d'},{n:'Copas',s:'🏆',c:'#d32f2f'}];
         const values = [1,2,3,4,5,6,7,10,11,12];
 
-        // Cambié onclick por onpointerdown para respuesta instantánea en móvil
         function startSoloGame() {
             isSolo = true;
             gameState.deck = [];
@@ -156,7 +187,7 @@
             gameState.deck.sort(() => Math.random() - 0.5);
             for(let i=0; i<2; i++) {
                 gameState.hands[i] = [];
-                for(let j=0; j<5; j++) gameState.hands[i].push(gameState.deck.pop());
+                for(let j=0; j<3; j++) gameState.hands[i].push(gameState.deck.pop());
             }
             gameState.discard = gameState.deck.pop();
             myIdInGame = 0;
@@ -165,7 +196,7 @@
 
         function startAsHost() {
             isHost = true;
-            peer = new Peer('mesa-' + Math.floor(Math.random()*999));
+            peer = new Peer('mesa-' + Math.floor(Math.random()*9999));
             peer.on('open', id => showWaiting(id));
             peer.on('connection', c => {
                 connections.push(c);
@@ -177,7 +208,7 @@
 
         function joinRoom() {
             const targetId = document.getElementById('join-id').value;
-            if(!targetId) return alert("Poné un ID");
+            if(!targetId) return;
             peer = new Peer();
             peer.on('open', () => {
                 conn = peer.connect(targetId);
@@ -188,11 +219,7 @@
 
         function handleData(data, senderIdx) {
             if(data.type === 'START') { gameState = data.state; myIdInGame = data.yourIdx; startGameUI(); }
-            if(data.type === 'UPDATE') { 
-                gameState = data.state; 
-                checkWin(); 
-                render(); 
-            }
+            if(data.type === 'UPDATE') { gameState = data.state; checkWin(); render(); }
             if(data.type === 'EMOJI') showEmoji(data.emoji);
         }
 
@@ -202,7 +229,7 @@
             gameState.deck.sort(() => Math.random() - 0.5);
             for(let i=0; i<4; i++) {
                 gameState.hands[i] = [];
-                for(let j=0; j<5; j++) gameState.hands[i].push(gameState.deck.pop());
+                for(let j=0; j<3; j++) gameState.hands[i].push(gameState.deck.pop());
             }
             gameState.discard = gameState.deck.pop();
             connections.forEach((c, i) => c.send({type: 'START', state: gameState, yourIdx: i+1}));
@@ -228,15 +255,10 @@
             myHand.forEach((card, i) => {
                 const cardEl = document.createElement('div');
                 cardEl.className = 'card-obj';
-                cardEl.innerHTML = `<b>${card.value}</b><div style="font-size:1.8rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b>`;
+                cardEl.innerHTML = `<b>${card.value}</b><div style="font-size:2rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b>`;
                 cardEl.style.color = card.suit.c;
-                cardEl.style.left = `calc(50% - 40px + ${(i - (myHand.length-1)/2)*55}px)`;
-                
-                // USAMOS onpointerdown PARA EL CELULAR
-                cardEl.onpointerdown = (e) => {
-                    e.preventDefault();
-                    playCard(i);
-                };
+                cardEl.style.left = `calc(50% - 42px + ${(i - (myHand.length-1)/2)*60}px)`;
+                cardEl.onpointerdown = (e) => { e.preventDefault(); playCard(i); };
                 handDiv.appendChild(cardEl);
             });
 
@@ -249,11 +271,7 @@
             if(card.suit.n === gameState.discard.suit.n || card.value === gameState.discard.value) {
                 gameState.discard = card;
                 gameState.hands[myIdInGame].splice(i, 1);
-                
-                if(gameState.hands[myIdInGame].length === 0) {
-                    showWinScreen(myIdInGame);
-                }
-
+                if(gameState.hands[myIdInGame].length === 0) showWinScreen(myIdInGame);
                 gameState.turn = (gameState.turn + 1) % (isSolo ? 2 : 4);
                 if(!isSolo) sync(); else render();
             }
@@ -261,9 +279,9 @@
 
         function iaMove() {
             if(!isSolo || gameState.turn !== 1 || gameFinished) return;
-            let possibleCards = gameState.hands[1].filter(c => c.suit.n === gameState.discard.suit.n || c.value === gameState.discard.value);
-            if(possibleCards.length > 0) {
-                let idx = gameState.hands[1].indexOf(possibleCards[0]);
+            let possible = gameState.hands[1].filter(c => c.suit.n === gameState.discard.suit.n || c.value === gameState.discard.value);
+            if(possible.length > 0) {
+                let idx = gameState.hands[1].indexOf(possible[0]);
                 gameState.discard = gameState.hands[1].splice(idx, 1)[0];
                 if(gameState.hands[1].length === 0) showWinScreen(1);
             } else if(gameState.deck.length > 0) {
@@ -274,17 +292,14 @@
         }
 
         function checkWin() {
-            if(gameFinished) return;
-            gameState.hands.forEach((hand, idx) => {
-                if(hand && hand.length === 0) showWinScreen(idx);
-            });
+            gameState.hands.forEach((hand, idx) => { if(hand && hand.length === 0) showWinScreen(idx); });
         }
 
         function showWinScreen(idx) {
             if(gameFinished) return;
             gameFinished = true;
             document.getElementById('win-overlay').style.display = 'flex';
-            document.getElementById('winner-name').innerText = (idx === myIdInGame) ? "¡TE LLEVASTE LA PARTIDA!" : "GANÓ JUGADOR " + (idx+1);
+            document.getElementById('winner-name').innerText = (idx === myIdInGame) ? "¡SOS EL REY DEL TRUCO!" : "GANÓ JUGADOR " + (idx+1);
         }
 
         function requestCard() {
@@ -317,26 +332,20 @@
 
         function createCardHTML(card) {
             if(!card) return '';
-            return `<div class="card-obj" style="color:${card.suit.c}"><b>${card.value}</b><div style="font-size:1.8rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b></div>`;
+            return `<div class="card-obj" style="color:${card.suit.c}"><b>${card.value}</b><div style="font-size:2rem;text-align:center">${card.suit.s}</div><b style="align-self:flex-end;transform:rotate(180deg)">${card.value}</b></div>`;
         }
 
         function showWaiting(id) {
-            document.getElementById('lobby').querySelector('.menu-card').children[1].style.display = 'none'; // Esconde botones iniciales
+            document.getElementById('join-id').style.display = 'none';
             document.getElementById('waiting-area').style.display = 'block';
             document.getElementById('my-id').innerText = id;
         }
 
-        function updateLobby() {
-            document.getElementById('player-count').innerText = connections.length + 1;
+        function updateLobby() { document.getElementById('player-count').innerText = connections.length + 1; }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log(err)); });
         }
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('¡App lista para usar offline!', reg))
-                .catch(err => console.log('Error al registrar el sw', err));
-        });
-    }
-</script>
+    </script>
 </body>
 </html>
