@@ -13,134 +13,155 @@
         }
         body { margin: 0; background: #000; font-family: 'Arial Black', sans-serif; color: white; overflow: hidden; touch-action: none; text-align: center; }
 
-        /* --- CINEMÁTICA TIPO FORTNITE --- */
+        /* --- CINEMÁTICA IMPACTO FORTNITE --- */
         #intro-cinematic {
             position: fixed; inset: 0; background: #000; z-index: 9999;
             display: flex; justify-content: center; align-items: center;
         }
         .fn-text {
-            font-size: 5rem; color: #fff; text-transform: uppercase; font-style: italic;
-            text-shadow: 0 0 20px rgba(255,255,255,0.8), 4px 4px 0px #0288d1;
-            animation: fortniteIn 3s ease-out forwards, shake 0.5s 0.2s;
+            font-family: 'Impact', sans-serif; font-size: 5.5rem; color: #fff; 
+            text-transform: uppercase; font-style: italic; letter-spacing: -2px;
+            text-shadow: -4px -4px 0 #000, 4px -4px 0 #000, -4px 4px 0 #000, 4px 4px 0 #000, 0 0 30px rgba(255,255,255,0.3);
+            animation: fortniteDrop 3s cubic-bezier(0.15, 0.85, 0.35, 1) forwards, screenShake 0.4s 0.15s;
         }
-        @keyframes fortniteIn {
-            0% { transform: scale(3); opacity: 0; filter: blur(10px); }
-            15% { transform: scale(1); opacity: 1; filter: blur(0); }
-            80% { opacity: 1; transform: scale(1.1); }
-            100% { opacity: 0; transform: scale(0.8); }
+        @keyframes fortniteDrop {
+            0% { transform: scale(6); opacity: 0; filter: blur(20px); }
+            10% { transform: scale(1); opacity: 1; filter: blur(0); }
+            85% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0; transform: scale(0.5); filter: blur(10px); }
         }
-        @keyframes shake {
-            0%, 100% { transform: translate(0,0); }
-            20% { transform: translate(-5px, 5px); }
-            40% { transform: translate(5px, -5px); }
-            60% { transform: translate(-5px, -5px); }
-            80% { transform: translate(5px, 5px); }
+        @keyframes screenShake {
+            0% { transform: translate(0,0); }
+            20% { transform: translate(-10px, 10px); }
+            40% { transform: translate(10px, -10px); }
+            60% { transform: translate(-10px, -10px); }
+            80% { transform: translate(10px, 10px); }
+            100% { transform: translate(0,0); }
         }
 
         /* --- MENÚ PRINCIPAL --- */
-        .menu-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; gap: 15px; padding: 20px; }
-        .logo { font-size: 3.2rem; font-style: italic; color: var(--gold); text-shadow: 0 0 20px rgba(255,235,59,0.4); margin-bottom: 5px; }
+        .menu-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; gap: 12px; padding: 20px; }
+        .logo { font-size: 3.5rem; font-style: italic; color: var(--gold); text-shadow: 0 0 20px rgba(255,235,59,0.5); margin-bottom: 5px; }
         
-        .btn { width: 90%; max-width: 450px; padding: 18px; border-radius: 50px; border: 4px solid #01579b; font-size: 1.4rem; font-weight: bold; cursor: pointer; color: white; text-shadow: 1px 1px 2px #000; transition: 0.2s; }
+        .btn { width: 95%; max-width: 450px; padding: 18px; border-radius: 50px; border: 4px solid #01579b; font-size: 1.4rem; font-weight: bold; cursor: pointer; color: white; text-shadow: 1px 1px 2px #000; transition: 0.2s; }
+        .btn-rules { background: #333; border-color: #111; font-size: 1.1rem; padding: 10px; }
         .btn-blue { background: var(--blue-btn); }
         .btn-yellow { background: var(--yellow-btn); color: #3e2723; border-color: #f57f17; }
-        .btn-rules { background: #333; border-color: #111; font-size: 1.1rem; padding: 12px; margin-bottom: 5px; }
+        .btn:active { transform: scale(0.95); }
 
-        /* VENTANA DE REGLAS (MODAL) */
+        input { width: 80%; max-width: 400px; padding: 15px; border-radius: 15px; border: none; font-size: 1.2rem; text-align: center; margin: 5px 0; outline: none; }
+
+        /* --- MODAL REGLAS DE TRUCO --- */
         #rules-modal { 
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
-            z-index: 2000; padding: 30px; align-items: center; justify-content: center;
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); 
+            z-index: 2000; padding: 25px; overflow-y: auto; align-items: center; justify-content: center;
         }
-        .rules-box { max-width: 500px; background: #111; border: 3px solid var(--gold); padding: 25px; border-radius: 20px; text-align: left; }
-        .rules-box h2 { color: var(--gold); margin-top: 0; text-align: center; }
+        .rules-box { max-width: 500px; background: #111; border: 3px solid var(--gold); padding: 25px; border-radius: 25px; text-align: left; }
+        .rules-box h2 { color: var(--gold); text-align: center; margin-top: 0; }
+        .rules-box b { color: #29b6f6; }
 
-        /* JUEGO */
+        /* --- MESA Y CARTAS --- */
         #game-ui { display: none; height: 100vh; flex-direction: column; background: radial-gradient(circle, #1b5e20, #0a3d1d); }
         .card-container { position: absolute; display: flex; flex-direction: column; align-items: center; transition: 0.3s; }
-        .emoji-float { font-size: 1.8rem; margin-bottom: -5px; z-index: 5; }
-        .card-obj { width: 75px; height: 110px; background: white; border-radius: 10px; color: black; padding: 8px; box-sizing: border-box; border: 1px solid #999; }
+        .emoji-float { font-size: 2rem; margin-bottom: -8px; z-index: 10; filter: drop-shadow(0 2px 4px #000); }
+        .card-obj { width: 80px; height: 120px; background: white; border-radius: 12px; color: black; padding: 10px; box-sizing: border-box; border: 2px solid #999; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-    <div id="intro-cinematic">
-        <div class="fn-text">TRUCO STACK</div>
-    </div>
+    <div id="intro-cinematic"><div class="fn-text">TRUCO STACK</div></div>
 
-    <div id="rules-modal">
-        <div class="rules-box">
-            <h2>📜 REGLAS</h2>
-            <p>🔥 <b>Objetivo:</b> Quedarse sin cartas primero.</p>
-            <p>🎺 <b>Poderes:</b> El 10 te da otro turno. El 12 salta al compañero/rival.</p>
-            <p>😭 <b>Robar:</b> Si no tenés el palo o número, tocá el mazo.</p>
-            <p>⚔️ <b>Online:</b> Pasá el ID de mesa a tus amigos para jugar desde sus casas.</p>
+    <div id="rules-modal" onclick="toggleRules(false)">
+        <div class="rules-box" onclick="event.stopPropagation()">
+            <h2>📜 MANUAL DE TRUCO</h2>
+            <p><b>🏆 JERARQUÍA:</b> 1⚔️, 1🪵, 7⚔️, 7🟡, 3, 2, 1 (falsos).</p>
+            <hr>
+            <p>🔥 <b>REYES (12):</b> Saltan al siguiente jugador.</p>
+            <p>🎺 <b>SOTAS (10):</b> ¡Turno extra!</p>
+            <p>😭 <b>7 BRAVOS:</b> Hacen robar +2 cartas al rival.</p>
+            <p>😂 <b>CABALLOS (11):</b> Cambian el sentido del juego.</p>
             <button class="btn btn-blue" onclick="toggleRules(false)">¡LISTO! 👍</button>
         </div>
     </div>
 
     <div id="main-menu" class="menu-container">
         <h1 class="logo">TRUCO STACK</h1>
+        
         <button class="btn btn-rules" onclick="toggleRules(true)">📖 REGLAS DEL JUEGO</button>
         <button class="btn btn-blue" onclick="startSolo()">🕹️ MODO SOLITARIO</button>
+        
         <hr style="width:85%; opacity:0.2;">
-        <button class="btn btn-yellow" onclick="crearMesa()">🏠 CREAR MESA ONLINE</button>
-        <input type="text" id="room-id-input" placeholder="ID de la Mesa">
-        <button class="btn btn-yellow" onclick="unirseAMesa()">🤝 UNIRSE A MESA</button>
+
+        <button class="btn btn-yellow" onclick="showOnlineMenu()">🌐 MODO ONLINE</button>
+        
+        <div id="online-actions" style="display:none; width:100%; flex-direction: column; align-items: center; gap: 10px;">
+            <button class="btn btn-yellow" onclick="crearMesa()">🏠 CREAR MESA (2vs2 / FFA)</button>
+            <input type="text" id="room-id-input" placeholder="ID DE MESA">
+            <button class="btn btn-blue" onclick="unirseAMesa()">🤝 UNIRSE A MESA</button>
+        </div>
+
+        <div id="waiting-area" style="display:none; margin-top:15px;">
+            <p>CÓDIGO: <b id="display-id" style="color:var(--gold); font-size: 2rem;">---</b></p>
+            <p id="connected-count">Esperando jugadores... (1/4) 👤</p>
+            <button class="btn btn-blue" id="start-btn" style="display:none;" onclick="repartir()">🚀 ¡EMPEZAR PARTIDA!</button>
+        </div>
     </div>
 
     <div id="game-ui">
-        <div id="my-hand" style="height: 160px; display: flex; justify-content: center; margin-top: auto; margin-bottom: 40px; position: relative;"></div>
+        <div id="my-hand" style="height: 180px; display: flex; justify-content: center; margin-top: auto; margin-bottom: 40px; position: relative;"></div>
     </div>
 
     <script>
-        // Función para abrir/cerrar reglas (Corregido)
-        function toggleRules(show) {
-            document.getElementById('rules-modal').style.display = show ? 'flex' : 'none';
-        }
+        function toggleRules(s) { document.getElementById('rules-modal').style.display = s ? 'flex' : 'none'; }
+        function showOnlineMenu() { document.getElementById('online-actions').style.display = 'flex'; }
 
         // Animación de entrada
         window.onload = () => {
             setTimeout(() => {
                 const intro = document.getElementById('intro-cinematic');
-                intro.style.transition = "opacity 0.6s";
+                intro.style.transition = "opacity 0.7s";
                 intro.style.opacity = "0";
-                setTimeout(() => intro.remove(), 600);
-            }, 2800);
+                setTimeout(() => intro.remove(), 700);
+            }, 2900);
         };
 
-        // Simulación de mano con Emojis arriba (Fuego, Llorar, Trompeta, Risa)
-        function renderHand() {
+        // Lógica de PeerJS (Simplificada para el ejemplo)
+        let peer, connections = [];
+        function crearMesa() {
+            const id = Math.random().toString(36).substring(2, 6).toUpperCase();
+            document.getElementById('display-id').innerText = id;
+            document.getElementById('waiting-area').style.display = 'block';
+            document.getElementById('online-actions').style.display = 'none';
+        }
+
+        function unirseAMesa() {
+            const id = document.getElementById('room-id-input').value.toUpperCase();
+            if(!id) return alert("Poné el ID");
+            document.getElementById('waiting-area').style.display = 'block';
+            document.getElementById('display-id').innerText = "CONECTANDO...";
+        }
+
+        function repartir() {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('game-ui').style.display = 'flex';
+            renderMano();
+        }
+
+        function renderMano() {
             const handDiv = document.getElementById('my-hand');
             const hand = [
-                {v: 1, s: '⚔️', e: '🔥'}, 
-                {v: 7, s: '🟡', e: '😭'}, 
-                {v: 10, s: '🏆', e: '🎺'}, 
-                {v: 12, s: '🪵', e: '😂'}
+                {v: 1, s: '⚔️', e: '🔥'}, {v: 10, s: '🏆', e: '🎺'}, {v: 7, s: '🟡', e: '😭'}
             ];
-
             hand.forEach((c, i) => {
                 const container = document.createElement('div');
                 container.className = 'card-container';
-                container.style.left = `calc(50% - 37px + ${(i - 1.5) * 85}px)`;
-                container.innerHTML = `
-                    <div class="emoji-float">${c.e}</div>
-                    <div class="card-obj">
-                        <b>${c.v}</b><br>${c.s}
-                    </div>
-                `;
+                container.style.left = `calc(50% - 40px + ${(i - 1) * 90}px)`;
+                container.innerHTML = `<div class="emoji-float">${c.e}</div><div class="card-obj"><b>${c.v}</b><br><br>${c.s}</div>`;
                 handDiv.appendChild(container);
             });
         }
 
-        function startSolo() {
-            document.getElementById('main-menu').style.display = 'none';
-            document.getElementById('game-ui').style.display = 'flex';
-            renderHand();
-        }
-
-        // Lógica de PeerJS para Online casa a casa (se mantiene igual)
-        function crearMesa() { /* ... código de conexión ... */ }
-        function unirseAMesa() { /* ... código de conexión ... */ }
+        function startSolo() { repartir(); }
     </script>
 </body>
 </html>
