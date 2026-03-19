@@ -15,29 +15,32 @@
         body { margin: 0; background: #000; font-family: 'Arial Black', sans-serif; color: white; overflow: hidden; touch-action: none; text-align: center; }
 
         /* --- MENÚ PRINCIPAL --- */
-        .menu-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; gap: 10px; padding: 20px; overflow-y: auto; }
-        .logo { font-size: 3.2rem; font-style: italic; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
+        .menu-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; gap: 12px; padding: 20px; overflow-y: auto; }
+        .logo { font-size: 3.5rem; font-style: italic; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
         
-        .btn { width: 95%; max-width: 450px; padding: 18px; border-radius: 50px; border: 4px solid #01579b; font-size: 1.2rem; font-weight: bold; cursor: pointer; color: white; text-shadow: 1px 1px 2px #000; text-transform: uppercase; transition: 0.2s; }
+        .btn { width: 95%; max-width: 450px; padding: 18px; border-radius: 50px; border: 4px solid #01579b; font-size: 1.3rem; font-weight: bold; cursor: pointer; color: white; text-shadow: 1px 1px 2px #000; text-transform: uppercase; transition: 0.2s; border: 4px solid #01579b; }
         .btn-rules { background: #333; border-color: #111; font-size: 1rem; padding: 10px; }
         .btn-blue { background: var(--blue-btn); }
         .btn-yellow { background: var(--yellow-btn); color: #3e2723; border-color: #f57f17; }
 
-        input { width: 85%; max-width: 400px; padding: 15px; border-radius: 12px; border: none; font-size: 1.1rem; text-align: center; margin: 5px 0; }
+        /* SELECTOR DE MODO */
+        .mode-selector { width: 90%; max-width: 420px; padding: 15px; background: #222; border: 2px solid var(--gold); border-radius: 15px; margin: 5px 0; }
+        select { width: 100%; padding: 12px; background: #000; color: white; border: 1px solid #555; border-radius: 8px; font-size: 1.1rem; font-weight: bold; }
+
+        input { width: 85%; max-width: 400px; padding: 16px; border-radius: 15px; border: none; font-size: 1.1rem; text-align: center; margin: 10px 0; outline: none; }
         
         /* --- UI JUEGO --- */
         #game-ui { display: none; height: 100vh; flex-direction: column; background: radial-gradient(circle, #1b5e20, #0a3d1d); }
-        .action-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; padding: 10px; background: rgba(0,0,0,0.8); border-bottom: 2px solid var(--gold); }
-        .btn-action { padding: 10px; border-radius: 8px; border: none; font-weight: bold; background: var(--gold); color: #000; font-size: 0.8rem; text-transform: uppercase; }
-        .btn-team { background: var(--team-btn); color: white; }
+        .action-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 15px; background: rgba(0,0,0,0.8); border-bottom: 2px solid var(--gold); }
+        .btn-action { padding: 12px; border-radius: 10px; border: none; font-weight: bold; background: var(--gold); color: #000; font-size: 0.85rem; text-transform: uppercase; }
+        .btn-team { background: var(--team-btn); color: white; border: 2px solid #fff; }
 
-        /* --- CHAT TÁCTICO --- */
-        #chat-display { position: absolute; top: 120px; left: 10px; right: 10px; height: 120px; overflow: hidden; display: none; flex-direction: column; gap: 5px; pointer-events: none; }
-        .msg { font-size: 0.9rem; padding: 5px 10px; border-radius: 5px; text-align: left; width: fit-content; max-width: 80%; }
-        .msg-global { background: rgba(255,255,255,0.2); color: white; }
-        .msg-team { background: rgba(76, 175, 80, 0.4); color: #afffaf; border-left: 4px solid #4CAF50; font-weight: bold; }
+        /* CHAT Y MENSAJES */
+        #chat-display { position: absolute; top: 130px; left: 15px; right: 15px; height: 140px; display: none; flex-direction: column; gap: 6px; pointer-events: none; }
+        .msg { font-size: 0.95rem; padding: 8px 12px; border-radius: 8px; text-align: left; width: fit-content; max-width: 85%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        .msg-team { background: rgba(76, 175, 80, 0.6); color: #fff; border-left: 5px solid #2e7d32; font-weight: bold; }
 
-        #shout-box { position: absolute; top: 45%; width: 100%; font-size: 3.5rem; color: #fff; text-shadow: 0 0 20px #000; font-style: italic; pointer-events: none; }
+        #shout-box { position: absolute; top: 45%; width: 100%; font-size: 3.5rem; color: #fff; text-shadow: 0 0 20px #000; font-style: italic; pointer-events: none; transition: 0.3s; }
         #my-hand { height: 180px; display: flex; justify-content: center; margin-top: auto; margin-bottom: 30px; position: relative; }
         .card-obj { width: 85px; height: 125px; background: white; border-radius: 12px; color: black; padding: 10px; border: 2px solid #999; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
     </style>
@@ -46,28 +49,35 @@
 
     <div id="main-menu" class="menu-container">
         <h1 class="logo">TRUCO STACK</h1>
-        <button class="btn btn-rules" onclick="alert('Reglas Mixtas Activas.')">📖 REGLAS</button>
+        <button class="btn btn-rules" onclick="alert('Reglas: Truco + Poderes Uno (10, 11, 12).')">📖 REGLAS</button>
         <button class="btn btn-blue" onclick="startJuego('SOLO')">🕹️ MODO SOLITARIO</button>
         
-        <hr style="width:90%; opacity:0.3;">
-        <p style="margin:0; font-size:0.8rem;">🏠 MISMO LUGAR (SIN CHAT)</p>
-        <button class="btn btn-yellow" onclick="iniciarMesa('LOCAL')">CREAR MESA LOCAL</button>
+        <hr style="width:90%; opacity:0.3; margin: 10px 0;">
+
+        <button class="btn btn-yellow" onclick="iniciarMesa('LOCAL')">🏠 CREAR MESA LOCAL (Misma Casa)</button>
         
-        <hr style="width:90%; opacity:0.3;">
-        <p style="margin:0; font-size:0.8rem;">🌍 DISTINTAS CASAS (CON CHAT TÁCTICO)</p>
-        <button class="btn btn-yellow" onclick="iniciarMesa('2V2')">CREAR 2 VS 2 ONLINE</button>
-        <button class="btn btn-yellow" onclick="iniciarMesa('FFA')">CREAR TODOS VS TODOS</button>
+        <hr style="width:90%; opacity:0.3; margin: 10px 0;">
+
+        <div class="mode-selector">
+            <label style="font-size: 0.8rem; display: block; margin-bottom: 5px;">MODO PARA DISTINTAS CASAS:</label>
+            <select id="online-mode-select">
+                <option value="2V2">EQUIPOS: 2 VS 2 (Con Chat Secreto)</option>
+                <option value="FFA">TODOS CONTRA TODOS (FFA)</option>
+            </select>
+        </div>
+        <button class="btn btn-yellow" onclick="iniciarMesaOnline()">🌍 CREAR MESA ONLINE</button>
         
-        <input type="text" id="room-input" placeholder="CÓDIGO DE MESA">
+        <input type="text" id="room-input" placeholder="INGRESAR CÓDIGO DE MESA">
         <button class="btn btn-yellow" onclick="unirse()">🤝 UNIRSE A MESA</button>
-        <p id="status" style="color:var(--gold); font-size:0.9rem;"></p>
+        
+        <p id="status" style="color:var(--gold); font-weight: bold; margin-top: 10px;"></p>
     </div>
 
     <div id="game-ui">
-        <div class="action-bar" id="game-actions">
+        <div class="action-bar">
             <button class="btn-action" onclick="gritar('¡TRUCO!')">⚔️ TRUCO</button>
             <button class="btn-action" onclick="gritar('¡ENVIDO!')">🍀 ENVIDO</button>
-            <button class="btn-action btn-team" id="btn-secret" onclick="susurrar()">🤫 SUSURRAR COMPAÑERO</button>
+            <button class="btn-action btn-team" id="btn-secret" onclick="susurrar()">🤫 SUSURRO TÁCTICO</button>
         </div>
         
         <div id="chat-display"></div>
@@ -76,22 +86,42 @@
     </div>
 
     <script>
-        let peer, conn, tipoJuego;
+        let peer, conn, modoActual;
 
+        // Inicia Mesa Local
         function iniciarMesa(tipo) {
-            tipoJuego = tipo;
-            const code = tipo + "-" + Math.random().toString(36).substring(2, 5).toUpperCase();
-            peer = new Peer(code);
+            modoActual = tipo;
+            generarPeer(tipo + "-" + Math.random().toString(36).substring(2, 5).toUpperCase());
+        }
+
+        // Inicia Mesa Online usando el Selector
+        function iniciarMesaOnline() {
+            const select = document.getElementById('online-mode-select');
+            modoActual = select.value;
+            generarPeer(modoActual + "-" + Math.random().toString(36).substring(2, 5).toUpperCase());
+        }
+
+        function generarPeer(id) {
+            peer = new Peer(id);
             peer.on('open', (id) => {
-                document.getElementById('status').innerText = "ID: " + id;
-                alert("Mesa " + tipo + " creada. Código: " + id);
+                document.getElementById('status').innerText = "ID DE MESA: " + id;
+                alert("Mesa creada con éxito. Código: " + id);
             });
-            setupConexion();
+            peer.on('connection', (c) => {
+                conn = c;
+                conn.on('data', (data) => {
+                    if(data.type === 'JOIN') startJuego();
+                    if(data.type === 'SHOUT') animarGrito(data.txt);
+                    if(data.type === 'SECRET') recibirSusurro(data.txt);
+                });
+                alert("¡Un jugador se ha conectado!");
+            });
         }
 
         function unirse() {
             const code = document.getElementById('room-input').value.toUpperCase();
-            tipoJuego = code.includes('2V2') ? '2V2' : (code.includes('FFA') ? 'FFA' : 'LOCAL');
+            if(!code) return alert("Ingresa un código");
+            modoActual = code.includes('2V2') ? '2V2' : (code.includes('FFA') ? 'FFA' : 'LOCAL');
             peer = new Peer();
             peer.on('open', () => {
                 conn = peer.connect(code);
@@ -102,29 +132,6 @@
             });
         }
 
-        function setupConexion() {
-            peer.on('connection', (c) => {
-                conn = c;
-                conn.on('data', (data) => {
-                    if(data.type === 'JOIN') startJuego();
-                    if(data.type === 'SHOUT') animarGrito(data.txt);
-                    if(data.type === 'SECRET') mostrarMensaje(data.txt, true);
-                });
-            });
-        }
-
-        function startJuego() {
-            document.getElementById('main-menu').style.display = 'none';
-            document.getElementById('game-ui').style.display = 'flex';
-            if(tipoJuego === '2V2' || tipoJuego === 'FFA') {
-                document.getElementById('chat-display').style.display = 'flex';
-            }
-            if(tipoJuego !== '2V2') {
-                document.getElementById('btn-secret').style.display = 'none';
-            }
-            renderMano();
-        }
-
         function gritar(txt) {
             animarGrito(txt);
             if(conn) conn.send({type: 'SHOUT', txt: txt});
@@ -133,30 +140,43 @@
         function susurrar() {
             const msg = prompt("Mensaje secreto para tu compañero:");
             if(msg) {
-                mostrarMensaje("Secreto: " + msg, true);
+                mostrarMensajeInApp("Tú: " + msg, true);
                 if(conn) conn.send({type: 'SECRET', txt: msg});
             }
+        }
+
+        function recibirSusurro(txt) {
+            if (window.navigator.vibrate) window.navigator.vibrate([200, 100, 200]); 
+            mostrarMensajeInApp("Compañero: " + txt, true);
         }
 
         function animarGrito(txt) {
             const box = document.getElementById('shout-box');
             box.innerText = txt;
-            box.style.transform = "scale(1.2)";
+            box.style.transform = "scale(1.3)";
             setTimeout(() => { box.innerText = ""; box.style.transform = "scale(1)"; }, 2000);
         }
 
-        function mostrarMensaje(txt, esSecreto) {
+        function mostrarMensajeInApp(txt, secreto) {
             const chat = document.getElementById('chat-display');
             const div = document.createElement('div');
-            div.className = esSecreto ? 'msg msg-team' : 'msg msg-global';
+            div.className = secreto ? 'msg msg-team' : 'msg';
             div.innerText = txt;
             chat.appendChild(div);
-            if(chat.childNodes.length > 4) chat.removeChild(chat.firstChild);
+            if(chat.childNodes.length > 3) chat.removeChild(chat.firstChild);
+        }
+
+        function startJuego() {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('game-ui').style.display = 'flex';
+            if(modoActual === '2V2' || modoActual === 'FFA') document.getElementById('chat-display').style.display = 'flex';
+            if(modoActual !== '2V2') document.getElementById('btn-secret').style.display = 'none';
+            renderMano();
         }
 
         function renderMano() {
             const handDiv = document.getElementById('my-hand');
-            const cards = [{v: 1, s: '⚔️'}, {v: 11, s: '🐎'}, {v: 12, s: '👑'}];
+            const cards = [{v: 1, s: '⚔️'}, {v: 7, s: '🟡'}, {v: 12, s: '👑'}];
             cards.forEach((c, i) => {
                 const div = document.createElement('div');
                 div.style.position = "absolute";
