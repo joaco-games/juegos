@@ -14,7 +14,7 @@
         }
         body { margin: 0; background: #000; font-family: 'Arial Black', sans-serif; color: white; overflow: hidden; touch-action: none; text-align: center; }
 
-        /* --- CINEMÁTICA IMPACTO FORTNITE --- */
+        /* --- CINEMÁTICA IMPACTO --- */
         #intro-cinematic {
             position: fixed; inset: 0; background: #000; z-index: 9999;
             display: flex; justify-content: center; align-items: center;
@@ -23,7 +23,7 @@
             font-family: 'Impact', sans-serif; font-size: 5.5rem; color: #fff; 
             text-transform: uppercase; font-style: italic; letter-spacing: -2px;
             text-shadow: -4px -4px 0 #000, 4px -4px 0 #000, -4px 4px 0 #000, 4px 4px 0 #000, 0 0 30px rgba(255,255,255,0.3);
-            animation: fortniteDrop 3s cubic-bezier(0.15, 0.85, 0.35, 1) forwards, screenShake 0.4s 0.2s;
+            animation: fortniteDrop 3.2s cubic-bezier(0.15, 0.85, 0.35, 1) forwards, screenShake 0.4s 0.2s;
         }
         @keyframes fortniteDrop {
             0% { transform: scale(6); opacity: 0; filter: blur(20px); }
@@ -34,126 +34,161 @@
         @keyframes screenShake { 0%, 100% { transform: translate(0,0); } 20% { transform: translate(-10px, 10px); } 40% { transform: translate(10px, -10px); } 60% { transform: translate(-10px, -10px); } 80% { transform: translate(10px, 10px); } }
 
         /* --- MENÚ PRINCIPAL --- */
-        .menu-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; gap: 15px; padding: 20px; }
-        .logo { font-size: 4rem; font-style: italic; color: var(--gold); text-shadow: 0 0 20px rgba(255,235,59,0.5); margin-bottom: 20px; text-transform: uppercase; }
+        .menu-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; gap: 12px; padding: 20px; }
+        .logo { font-size: 3.8rem; font-style: italic; color: var(--gold); text-shadow: 0 0 20px rgba(255,235,59,0.5); margin-bottom: 10px; text-transform: uppercase; }
         
-        .btn { width: 95%; max-width: 450px; padding: 18px; border-radius: 50px; border: 4px solid #01579b; font-size: 1.4rem; font-weight: bold; cursor: pointer; color: white; text-shadow: 1px 1px 2px #000; transition: 0.2s; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-rules { background: var(--dark-btn); border-color: #444; font-size: 1.1rem; }
+        .btn { width: 95%; max-width: 450px; padding: 18px; border-radius: 50px; border: 4px solid #01579b; font-size: 1.4rem; font-weight: bold; cursor: pointer; color: white; text-shadow: 1px 1px 2px #000; transition: 0.2s; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-rules { background: var(--dark-btn); border-color: #444; font-size: 1.1rem; padding: 12px; }
         .btn-blue { background: var(--blue-btn); }
-        .btn-yellow { background: var(--yellow-btn); color: #3e2723; border-color: #fbc02d; }
-        
-        input { width: 85%; max-width: 400px; padding: 18px; border-radius: 15px; border: none; font-size: 1.3rem; text-align: center; margin: 10px 0; outline: none; background: #fff; color: #000; }
+        .btn-yellow { background: var(--yellow-btn); color: #3e2723; border-color: #f57f17; }
+        .btn:active { transform: scale(0.95); }
+
+        input { width: 85%; max-width: 400px; padding: 16px; border-radius: 15px; border: none; font-size: 1.2rem; text-align: center; margin: 8px 0; outline: none; background: #fff; color: #333; }
+        select { width: 88%; max-width: 410px; padding: 10px; border-radius: 10px; background: #222; color: white; border: 1px solid var(--gold); margin-bottom: 5px; font-weight: bold; }
+
+        /* --- MODAL REGLAS --- */
+        #rules-modal { 
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); 
+            z-index: 2000; padding: 25px; overflow-y: auto; align-items: flex-start; justify-content: center;
+        }
+        .rules-box { max-width: 500px; background: #111; border: 3px solid var(--gold); padding: 25px; border-radius: 25px; text-align: left; }
+        .rules-box h2 { color: var(--gold); text-align: center; margin-top: 0; }
 
         /* --- UI JUEGO --- */
         #game-ui { display: none; height: 100vh; flex-direction: column; background: radial-gradient(circle, #1b5e20, #0a3d1d); }
-        .action-bar { display: flex; justify-content: center; gap: 10px; padding: 15px; background: rgba(0,0,0,0.6); }
-        .btn-action { padding: 12px 20px; border-radius: 10px; border: none; font-weight: bold; background: var(--gold); color: #000; text-transform: uppercase; cursor: pointer; }
+        .action-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 15px; background: rgba(0,0,0,0.6); border-bottom: 2px solid var(--gold); }
+        .btn-action { padding: 10px 15px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; background: var(--gold); color: #000; text-transform: uppercase; font-size: 0.9rem; }
         
+        #msg-display { position: absolute; top: 40%; width: 100%; font-size: 3.5rem; color: #fff; text-shadow: 0 0 20px #000; pointer-events: none; z-index: 500; font-style: italic; transition: 0.2s; }
         #my-hand { height: 180px; display: flex; justify-content: center; margin-top: auto; margin-bottom: 40px; position: relative; }
-        .card-container { position: absolute; display: flex; flex-direction: column; align-items: center; }
-        .emoji-float { font-size: 2.2rem; margin-bottom: -10px; z-index: 10; filter: drop-shadow(0 0 5px #000); }
-        .card-obj { width: 85px; height: 125px; background: white; border-radius: 12px; color: black; padding: 10px; box-sizing: border-box; border: 2px solid #999; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .card-container { position: absolute; display: flex; flex-direction: column; align-items: center; transition: 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+        .emoji-float { font-size: 2.2rem; margin-bottom: -12px; z-index: 10; filter: drop-shadow(0 2px 4px #000); }
+        .card-obj { width: 85px; height: 125px; background: white; border-radius: 12px; color: black; padding: 10px; box-sizing: border-box; border: 2px solid #999; box-shadow: 0 8px 15px rgba(0,0,0,0.6); }
     </style>
 </head>
 <body>
 
     <div id="intro-cinematic"><div class="fn-text">TRUCO STACK</div></div>
 
+    <div id="rules-modal">
+        <div class="rules-box">
+            <h2>📜 REGLAS MIXTAS</h2>
+            <p><b>⚔️ TRUCO:</b> Valores clásicos (Espada, Basto, 7, 7, 3, 2...).</p>
+            <p><b>🔄 UNO:</b> Se tira por palo o número. Los 10, 11 y 12 tienen poderes.</p>
+            <hr>
+            <p><b>🔥 PODERES:</b> 10 (Extra), 12 (Salto), 7 Bravo (+2 cartas).</p>
+            <button class="btn btn-blue" onclick="toggleRules(false)" style="width:100%">¡ENTENDIDO! 👍</button>
+        </div>
+    </div>
+
     <div id="main-menu" class="menu-container">
         <h1 class="logo">TRUCO STACK</h1>
         
-        <button class="btn btn-rules" onclick="alert('Reglas: Jerarquía de Truco + Poderes Uno (10: Turno extra, 11: Salto, 12: Cambio de sentido).')">📖 REGLAS DEL JUEGO</button>
+        <button class="btn btn-rules" onclick="toggleRules(true)">📖 REGLAS DEL JUEGO</button>
         
         <button class="btn btn-blue" onclick="startJuego('SOLO')">🕹️ MODO SOLITARIO</button>
         
-        <hr style="width:90%; opacity:0.2; margin: 10px 0;">
+        <hr style="width:90%; opacity:0.3; margin: 5px 0;">
         
-        <select id="game-mode" style="width: 90%; max-width: 420px; padding: 10px; border-radius: 10px; background: #333; color: white; border: 1px solid var(--gold); margin-bottom: 5px;">
+        <select id="game-mode">
             <option value="FFA">TODOS CONTRA TODOS (FFA)</option>
             <option value="2V2">EQUIPOS 2 VS 2</option>
         </select>
 
         <button class="btn btn-yellow" onclick="crearServidor()">🏠 CREAR MESA ONLINE</button>
         
-        <input type="text" id="join-code" placeholder="ID de la Mesa">
+        <input type="text" id="room-id-input" placeholder="ID de la Mesa">
         <button class="btn btn-yellow" onclick="conectarServidor()">🤝 UNIRSE A MESA</button>
         
-        <p id="status-msg" style="margin-top:10px; color: var(--gold); font-size: 1.2rem;"></p>
+        <p id="status-msg" style="color: var(--gold); font-weight: bold;"></p>
     </div>
 
     <div id="game-ui">
         <div class="action-bar">
-            <button class="btn-action" onclick="gritar('¡ENVIDO!')">🍀 ENVIDO</button>
-            <button class="btn-action" onclick="gritar('¡TRUCO!')">⚔️ TRUCO</button>
+            <button class="btn-action" onclick="cantar('¡ENVIDO!')">🍀 ENVIDO</button>
+            <button class="btn-action" onclick="cantar('¡TRUCO!')">⚔️ TRUCO</button>
+            <button class="btn-action" onclick="cantar('¡RETRUCO!')">🔥 RETRUCO</button>
+            <button class="btn-action" onclick="cantar('¡QUIERO!')">👍 QUIERO</button>
         </div>
-        <h2 id="shout-display" style="font-size: 3rem; margin-top: 50px; text-shadow: 2px 2px #000; text-transform: uppercase;"></h2>
+        
+        <div id="msg-display"></div>
         <div id="my-hand"></div>
     </div>
 
     <script>
         let peer, conn;
-        
+
+        function toggleRules(s) { document.getElementById('rules-modal').style.display = s ? 'flex' : 'none'; }
+
+        // Cinemática Fortnite
+        window.onload = () => {
+            setTimeout(() => {
+                const intro = document.getElementById('intro-cinematic');
+                intro.style.transition = "opacity 0.8s ease";
+                intro.style.opacity = "0";
+                setTimeout(() => intro.remove(), 800);
+            }, 3200);
+        };
+
+        // Lógica Online (PeerJS)
         function crearServidor() {
             const mode = document.getElementById('game-mode').value;
             const code = Math.random().toString(36).substring(2, 6).toUpperCase();
             peer = new Peer(code);
             peer.on('open', (id) => {
-                document.getElementById('status-msg').innerText = `MODO ${mode} - CÓDIGO: ${id}`;
-                alert(`Mesa ${mode} creada. Código: ${id}`);
+                document.getElementById('status-msg').innerText = `MESA ${mode}: ${id}`;
+                alert(`Mesa creada. Comparte el código: ${id}`);
             });
             peer.on('connection', (c) => {
                 conn = c;
                 conn.on('data', (data) => { if(data === 'START') startJuego(mode); });
-                alert("¡Un jugador se ha unido!");
+                alert("¡Un jugador se unió a la mesa!");
             });
         }
 
         function conectarServidor() {
-            const code = document.getElementById('join-code').value.toUpperCase();
-            if(!code) return alert("Ingresa el ID de la mesa");
+            const code = document.getElementById('room-id-input').value.toUpperCase();
+            if(!code) return alert("Ingresa el ID");
             peer = new Peer();
             peer.on('open', () => {
                 const connection = peer.connect(code);
                 connection.on('open', () => {
-                    document.getElementById('status-msg').innerText = "CONECTANDO...";
+                    document.getElementById('status-msg').innerText = "CONECTADO";
                     connection.send('START');
                     startJuego('ONLINE');
                 });
             });
         }
 
+        // Sistema de Gritos
+        function cantar(texto) {
+            const display = document.getElementById('msg-display');
+            display.innerText = texto;
+            display.style.transform = "scale(1.5)";
+            setTimeout(() => {
+                display.style.transform = "scale(1)";
+                setTimeout(() => display.innerText = "", 1500);
+            }, 200);
+        }
+
         function startJuego(tipo) {
             document.getElementById('main-menu').style.display = 'none';
             document.getElementById('game-ui').style.display = 'flex';
-            renderMano();
+            renderHand();
         }
 
-        function gritar(texto) {
-            const h2 = document.getElementById('shout-display');
-            h2.innerText = texto;
-            setTimeout(() => h2.innerText = "", 2000);
-        }
-
-        function renderMano() {
+        function renderHand() {
             const handDiv = document.getElementById('my-hand');
+            handDiv.innerHTML = "";
             const hand = [{v: 1, s: '⚔️', e: '🔥'}, {v: 10, s: '🏆', e: '🎺'}, {v: 7, s: '🟡', e: '😭'}];
             hand.forEach((c, i) => {
                 const container = document.createElement('div');
                 container.className = 'card-container';
                 container.style.left = `calc(50% - 42px + ${(i - 1) * 95}px)`;
-                container.innerHTML = `<div class="emoji-float">${c.e}</div><div class="card-obj"><b>${c.v}</b><br><br>${c.s}</div>`;
+                container.innerHTML = `<div class="emoji-float">${c.e}</div><div class="card-obj"><b>${c.v}</b><br><br><span style="font-size:2rem">${c.s}</span></div>`;
                 handDiv.appendChild(container);
             });
         }
-
-        window.onload = () => {
-            setTimeout(() => {
-                const intro = document.getElementById('intro-cinematic');
-                intro.style.transition = "opacity 0.8s";
-                intro.style.opacity = "0";
-                setTimeout(() => intro.remove(), 800);
-            }, 3000);
-        };
     </script>
 </body>
 </html>
