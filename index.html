@@ -18,14 +18,15 @@
         .menu-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; gap: 12px; padding: 20px; overflow-y: auto; }
         .logo { font-size: 3.5rem; font-style: italic; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
         
-        .btn { width: 95%; max-width: 450px; padding: 18px; border-radius: 50px; border: 4px solid #01579b; font-size: 1.3rem; font-weight: bold; cursor: pointer; color: white; text-shadow: 1px 1px 2px #000; text-transform: uppercase; transition: 0.2s; border: 4px solid #01579b; }
+        .btn { width: 95%; max-width: 450px; padding: 18px; border-radius: 50px; border: 4px solid #01579b; font-size: 1.3rem; font-weight: bold; cursor: pointer; color: white; text-shadow: 1px 1px 2px #000; text-transform: uppercase; transition: 0.2s; }
         .btn-rules { background: #333; border-color: #111; font-size: 1rem; padding: 10px; }
         .btn-blue { background: var(--blue-btn); }
         .btn-yellow { background: var(--yellow-btn); color: #3e2723; border-color: #f57f17; }
 
-        /* SELECTOR DE MODO */
-        .mode-selector { width: 90%; max-width: 420px; padding: 15px; background: #222; border: 2px solid var(--gold); border-radius: 15px; margin: 5px 0; }
-        select { width: 100%; padding: 12px; background: #000; color: white; border: 1px solid #555; border-radius: 8px; font-size: 1.1rem; font-weight: bold; }
+        /* SELECTOR/BOTÓN DE MODO ONLINE */
+        .mode-selector { width: 90%; max-width: 420px; padding: 15px; background: #222; border: 3px solid var(--gold); border-radius: 15px; margin: 5px 0; cursor: pointer; transition: 0.3s; }
+        .mode-selector:active { transform: scale(0.95); background: #333; }
+        select { width: 100%; padding: 12px; background: #000; color: white; border: 1px solid #555; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
 
         input { width: 85%; max-width: 400px; padding: 16px; border-radius: 15px; border: none; font-size: 1.1rem; text-align: center; margin: 10px 0; outline: none; }
         
@@ -37,7 +38,7 @@
 
         /* CHAT Y MENSAJES */
         #chat-display { position: absolute; top: 130px; left: 15px; right: 15px; height: 140px; display: none; flex-direction: column; gap: 6px; pointer-events: none; }
-        .msg { font-size: 0.95rem; padding: 8px 12px; border-radius: 8px; text-align: left; width: fit-content; max-width: 85%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        .msg { font-size: 0.95rem; padding: 8px 12px; border-radius: 8px; text-align: left; width: fit-content; max-width: 85%; box-shadow: 0 4px 8px rgba(0,0,0,0.3); background: rgba(255,255,255,0.1); }
         .msg-team { background: rgba(76, 175, 80, 0.6); color: #fff; border-left: 5px solid #2e7d32; font-weight: bold; }
 
         #shout-box { position: absolute; top: 45%; width: 100%; font-size: 3.5rem; color: #fff; text-shadow: 0 0 20px #000; font-style: italic; pointer-events: none; transition: 0.3s; }
@@ -58,14 +59,18 @@
         
         <hr style="width:90%; opacity:0.3; margin: 10px 0;">
 
-        <div class="mode-selector">
-            <label style="font-size: 0.8rem; display: block; margin-bottom: 5px;">MODO PARA DISTINTAS CASAS:</label>
-            <select id="online-mode-select">
-                <option value="2V2">EQUIPOS: 2 VS 2 (Con Chat Secreto)</option>
+        <div class="mode-selector" id="btn-iniciar-online" onclick="iniciarMesaOnline()">
+            <label style="font-size: 0.8rem; display: block; margin-bottom: 5px; color: var(--gold); pointer-events: none;">
+                🚀 TOCÁ AQUÍ PARA ARRANCAR:
+            </label>
+            <select id="online-mode-select" onclick="event.stopPropagation()">
+                <option value="2V2">EQUIPOS: 2 VS 2 (Chat Secreto)</option>
                 <option value="FFA">TODOS CONTRA TODOS (FFA)</option>
             </select>
+            <p style="margin: 8px 0 0 0; font-size: 0.9rem; font-weight: bold; color: #fff; text-transform: uppercase; pointer-events: none;">
+                CREAR MESA ONLINE
+            </p>
         </div>
-        <button class="btn btn-yellow" onclick="iniciarMesaOnline()">🌍 CREAR MESA ONLINE</button>
         
         <input type="text" id="room-input" placeholder="INGRESAR CÓDIGO DE MESA">
         <button class="btn btn-yellow" onclick="unirse()">🤝 UNIRSE A MESA</button>
@@ -88,24 +93,32 @@
     <script>
         let peer, conn, modoActual;
 
-        // Inicia Mesa Local
-        function iniciarMesa(tipo) {
-            modoActual = tipo;
-            generarPeer(tipo + "-" + Math.random().toString(36).substring(2, 5).toUpperCase());
-        }
-
-        // Inicia Mesa Online usando el Selector
+        // Función para arrancar desde el nuevo botón/selector
         function iniciarMesaOnline() {
             const select = document.getElementById('online-mode-select');
             modoActual = select.value;
-            generarPeer(modoActual + "-" + Math.random().toString(36).substring(2, 5).toUpperCase());
+            
+            // Efecto visual de pulsado manual
+            const btn = document.getElementById('btn-iniciar-online');
+            btn.style.transform = "scale(0.95)";
+            
+            setTimeout(() => {
+                btn.style.transform = "scale(1)";
+                const code = modoActual + "-" + Math.random().toString(36).substring(2, 5).toUpperCase();
+                generarPeer(code);
+            }, 150);
+        }
+
+        function iniciarMesa(tipo) {
+            modoActual = tipo;
+            generarPeer(tipo + "-" + Math.random().toString(36).substring(2, 5).toUpperCase());
         }
 
         function generarPeer(id) {
             peer = new Peer(id);
             peer.on('open', (id) => {
                 document.getElementById('status').innerText = "ID DE MESA: " + id;
-                alert("Mesa creada con éxito. Código: " + id);
+                alert("Mesa creada: " + id);
             });
             peer.on('connection', (c) => {
                 conn = c;
@@ -114,7 +127,7 @@
                     if(data.type === 'SHOUT') animarGrito(data.txt);
                     if(data.type === 'SECRET') recibirSusurro(data.txt);
                 });
-                alert("¡Un jugador se ha conectado!");
+                alert("¡Jugador conectado!");
             });
         }
 
